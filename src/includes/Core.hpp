@@ -11,6 +11,8 @@
 #include "Pipeline.hpp"
 #include "Disco.hpp"
 #include "Pipeline.hpp"
+#include "ProcessManager.hpp"
+#include "ProcessControlBlock.hpp"
 
 #include <thread>
 #include <atomic>
@@ -22,17 +24,19 @@ public:
     int PC;
     RAM& ram;
     Disco& disco;
+    ProcessManager& processManager;
     int Clock;
 
-    Core(RAM& ram, Disco& disco);
-    void activate(); // Método principal de execução do core
-    void run();      // Método executado dentro da thread
-    void start();    // Método para iniciar a thread
-    void stop();     // Método para parar a thread
+    Core(RAM& ram, Disco& disco, ProcessManager& pm);
+    void start();     // Inicia a thread do Core
+    void stop();      // Para a thread do Core
+    void run();       // Executa a lógica de execução (loop do core)
 
 private:
-    std::thread coreThread;      // Thread associada ao núcleo
-    std::atomic<bool> isRunning; // Controle do estado de execução
+    std::thread coreThread;
+    std::atomic<bool> isRunning;
+
+    void executarProcesso(ProcessControlBlock& pcb);
 };
 
 #endif

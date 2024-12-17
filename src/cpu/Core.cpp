@@ -1,34 +1,48 @@
 #include "../includes/Core.hpp"
 
-Core::Core(RAM& ram, Disco& disco)
-    : ram(ram), disco(disco), PC(0), Clock(0), isRunning(false) {
-    std::cout << "Core inicializado com RAM\n";
-}
-
-void Core::activate() {
-    // Método principal chamado pela thread
-    uc.executarInstrucao(regs, ram, PC, disco, Clock);
-    std::cout << "PC: " << PC << std::endl;
-}
-
-void Core::run() {
-    // Método executado pela thread do núcleo
-    while (isRunning) {
-        activate(); // Executa o pipeline ou outras tarefas do core
-        std::this_thread::sleep_for(std::chrono::milliseconds(100)); // Simula execução
-    }
-}
+Core::Core(RAM& ram, Disco& disco, ProcessManager& pm)
+    : ram(ram), disco(disco), processManager(pm), PC(0), Clock(0), isRunning(false) {}
 
 void Core::start() {
-    // Inicia a thread associada ao núcleo
     isRunning = true;
-    coreThread = std::thread(&Core::run, this); // Vincula o método run à thread
+    coreThread = std::thread(&Core::run, this);
 }
 
 void Core::stop() {
-    // Para a thread associada ao núcleo
     isRunning = false;
     if (coreThread.joinable()) {
-        coreThread.join(); // Aguarda a finalização segura da thread
+        coreThread.join();
+    }
+}
+
+void Core::run() {
+    while (isRunning) {
+        if (processManager.temProcessosProntos()) {
+            ProcessControlBlock pcb = processManager.obterProximoProcesso();
+            pcb.state = EXECUTANDO;
+            std::cout << "Core executando processo ID: " << pcb.processID << std::endl;
+
+            executarProcesso(pcb);
+
+            if (pcb.quantum > 0) {
+                pcb.saveState(PC, regs);
+                pcb.state = PRONTO;
+                processManager.adicionarProcesso(pcb);
+            } else {
+                std::cout << "Processo ID " << pcb.processID << " concluído." << std::endl;
+            }
+        }
+        std::this_thread::sleep_for(std::chrono::milliseconds(100)); // Simula tempo de clock
+    }
+}
+
+void Core::executarProcesso(ProcessControlBlock& pcb) {
+    PC = pcb.PC;
+    regs = pcb.regs;
+
+    while (pcb.quantum > 0 && isRunning) {
+        uc.executarInstrucao(regs, ram, PC, disco, Clock);
+        pcb.quantum--;
+        std::cout << "Quantum restante para processo " << pcb.processID << ": " << pcb.quantum << std::endl;
     }
 }
