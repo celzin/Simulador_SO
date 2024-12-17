@@ -20,8 +20,9 @@ void Registers::set(int index, int value) {
 
 
 void Registers::display() const {
-    cout << endl << "Registradores: " << endl;
+    cout << "\nRegistradores:\n";
     for (size_t i = 0; i < registradores.size(); ++i) {
-        cout << "R[" << i << "] = " << registradores[i].first << ", Flag = " << (registradores[i].second ? "sujo" : "limpo") << endl;
+        cout << "R[" << i << "] = " << registradores[i].first
+             << ", Flag = " << (registradores[i].second ? "sujo" : "limpo") << endl;
     }
 }
