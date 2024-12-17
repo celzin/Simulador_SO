@@ -1,3 +1,6 @@
+#ifndef CORE_HPP
+#define CORE_HPP
+
 #include "Opcode.hpp"
 #include "Instruction.hpp"
 #include "Registers.hpp"
@@ -9,6 +12,9 @@
 #include "Disco.hpp"
 #include "Pipeline.hpp"
 
+#include <thread>
+#include <atomic>
+
 class Core {
 public:
     Registers regs;
@@ -19,14 +25,14 @@ public:
     int Clock;
 
     Core(RAM& ram, Disco& disco);
-    void activate();
+    void activate(); // Método principal de execução do core
+    void run();      // Método executado dentro da thread
+    void start();    // Método para iniciar a thread
+    void stop();     // Método para parar a thread
+
+private:
+    std::thread coreThread;      // Thread associada ao núcleo
+    std::atomic<bool> isRunning; // Controle do estado de execução
 };
 
-/*
-tem que ter uma classe propria pra pipiline com os 5 estagios la dentro, herdando e usando.
-classe de registradores para controlar os regs e pc
-classe ula tem que fazer a parte do exec da pipeline
-classe unidade de controle ela herda a pipeline e a ULA pra gerenciar
-A core tem as classes
-a uc tem que verificar o que esta fazendo
-*/
+#endif
