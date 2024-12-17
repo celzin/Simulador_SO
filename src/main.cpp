@@ -8,6 +8,7 @@
 #include "includes/Pipeline.hpp"
 #include "includes/Core.hpp"
 #include "includes/perifericos.hpp"
+#include "includes/ProcessManager.hpp"
 
 #include <vector>
 #include <iostream>
@@ -19,32 +20,30 @@ using namespace std;
 int main() {
     RAM ram;
     Disco disco;
-    vector<std::unique_ptr<Core>> cores;
-    Perifericos periferico;
+    ProcessManager processManager;
 
-    periferico.estadoPeriferico("teclado", true);
-    periferico.estadoPeriferico("mouse", true);
+    // Adiciona processos na fila de prontos
+    processManager.adicionarProcesso(ProcessControlBlock(1, 0, 5)); // Processo 1
+    processManager.adicionarProcesso(ProcessControlBlock(2, 0, 3)); // Processo 2
+    processManager.adicionarProcesso(ProcessControlBlock(3, 0, 4)); // Processo 3
 
-    for (int i = 0; i < 2; i++) {
-        std::cout << "CORE " << i << ": " << std::endl;
-        cores.emplace_back(std::make_unique<Core>(ram, disco));
-        cores[i]->start(); // Inicia a thread do núcleo
+    // Vetor de núcleos usando std::unique_ptr
+    std::vector<std::unique_ptr<Core>> cores;
+
+    for (int i = 0; i < 2; ++i) {
+        cores.emplace_back(std::make_unique<Core>(ram, disco, processManager));
+        cores[i]->start(); // Inicia a execução do núcleo
     }
 
-    std::this_thread::sleep_for(std::chrono::seconds(5));
+    // Simula tempo de execução
+    std::this_thread::sleep_for(std::chrono::seconds(10));
 
+    // Para os núcleos
     for (auto& core : cores) {
         core->stop();
     }
 
-    std::cout << "\nDados RAM\n";
-    ram.display();
-
-    std::cout << "\nDados DISCO\n";
-    disco.display();
-
-    std::cout << "\nEstado atual da RAM:\n";
-    ram.displayI();
+    std::cout << "\nExecução concluída. Todos os núcleos foram parados.\n";
 
     return 0;
 }
