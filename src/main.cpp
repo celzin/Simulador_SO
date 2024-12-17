@@ -11,50 +11,40 @@
 
 #include <vector>
 #include <iostream>
+#include <thread>
+#include <memory>
 
 using namespace std;
 
 int main() {
-
     RAM ram;
     Disco disco;
-    vector<Core> cores;
+    vector<std::unique_ptr<Core>> cores;
     Perifericos periferico;
 
     periferico.estadoPeriferico("teclado", true);
     periferico.estadoPeriferico("mouse", true);
 
-    for (int i = 0; i < 2; i++)
-    {   cout << "CORE " << i << ": " << endl;
-        cores.emplace_back(ram, disco);
-        cout << endl << endl << endl;
+    for (int i = 0; i < 2; i++) {
+        std::cout << "CORE " << i << ": " << std::endl;
+        cores.emplace_back(std::make_unique<Core>(ram, disco));
+        cores[i]->start(); // Inicia a thread do núcleo
     }
 
-    cout << "Utilizando o Core 0:" << endl;
-    cores[0].activate();
+    std::this_thread::sleep_for(std::chrono::seconds(5));
 
-    cout << "\nDados RAM\n";
+    for (auto& core : cores) {
+        core->stop();
+    }
+
+    std::cout << "\nDados RAM\n";
     ram.display();
 
-    cout << "\nDados DISCO\n";
+    std::cout << "\nDados DISCO\n";
     disco.display();
 
-    cout << "\nEstado atual da RAM:\n";
+    std::cout << "\nEstado atual da RAM:\n";
     ram.displayI();
-    
 
     return 0;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
