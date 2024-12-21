@@ -1,4 +1,7 @@
 #include "../includes/ProcessManager.hpp"
+#include <fstream>
+#include <sstream>
+#include <iostream>
 
 void ProcessManager::adicionarProcesso(const ProcessControlBlock& pcb) {
     std::lock_guard<std::mutex> lock(mtx);
@@ -41,4 +44,27 @@ void ProcessManager::desbloquearProcessos(const std::string& recurso) {
 bool ProcessManager::temProcessosProntos() {
     std::lock_guard<std::mutex> lock(mtx);
     return !filaProntos.empty();
+}
+
+void ProcessManager::setProcessFromFile(const std::string& processFilename){
+    std::ifstream processFile(processFilename);
+
+    if(!processFile.is_open()){
+        std::cerr << "Erro ao abrir o arquivo de processos: " << processFilename << std::endl;
+        return;
+    }
+
+    std::string line;
+    while (std::getline(processFile, line)){
+        int processID, processPC, processQuantum;
+        char comma1, comma2;
+        std::stringstream ss(line);
+
+        if(!(ss >> processID >> comma1 >> processPC >> comma2 >> processQuantum) || comma1 != ',' || comma2 != ','){
+            std::cerr << "Linha inválida no arquivo de processos: " << line << std::endl;
+            continue;
+        }
+
+        adicionarProcesso(ProcessControlBlock(processID, processPC, processQuantum));
+    }
 }

@@ -15,6 +15,8 @@
 #include <thread>
 #include <memory>
 
+#define NUM_CORES 2
+
 using namespace std;
 
 int main() {
@@ -23,14 +25,12 @@ int main() {
     ProcessManager processManager;
 
     // Adiciona processos na fila de prontos
-    processManager.adicionarProcesso(ProcessControlBlock(1, 0, 5)); // Processo 1
-    processManager.adicionarProcesso(ProcessControlBlock(2, 0, 3)); // Processo 2
-    processManager.adicionarProcesso(ProcessControlBlock(3, 0, 4)); // Processo 3
+    processManager.setProcessFromFile("data/setProcess.txt");
 
     // Vetor de núcleos usando std::unique_ptr
     std::vector<std::unique_ptr<Core>> cores;
 
-    for (int i = 0; i < 2; ++i) {
+    for (int i = 0; i < NUM_CORES; ++i) {
         cores.emplace_back(std::make_unique<Core>(ram, disco, processManager));
         cores[i]->start(); // Inicia a execução do núcleo
     }

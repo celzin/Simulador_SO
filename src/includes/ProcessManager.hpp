@@ -19,6 +19,7 @@ public:
     void bloquearProcesso(ProcessControlBlock& pcb, const std::string& recurso);
     void desbloquearProcessos(const std::string& recurso);
     bool temProcessosProntos();
+    void setProcessFromFile(const std::string& filename);
 };
 
 #endif
