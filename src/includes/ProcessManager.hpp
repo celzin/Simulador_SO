@@ -4,22 +4,28 @@
 #include "ProcessControlBlock.hpp"
 #include <queue>
 #include <mutex>
+#include <unordered_map>
 #include <condition_variable>
+#include <string>
 
-class ProcessManager {
+class ProcessManager
+{
 private:
     std::queue<ProcessControlBlock> filaProntos;
     std::queue<ProcessControlBlock> filaBloqueados;
+    std::unordered_map<std::string, bool> recursos;
     std::mutex mtx;
     std::condition_variable cv;
 
 public:
-    void adicionarProcesso(const ProcessControlBlock& pcb);
+    ProcessManager();
+
+    void adicionarProcesso(const ProcessControlBlock &pcb);
     ProcessControlBlock obterProximoProcesso();
-    void bloquearProcesso(ProcessControlBlock& pcb, const std::string& recurso);
-    void desbloquearProcessos(const std::string& recurso);
+    void bloquearProcesso(ProcessControlBlock &pcb, const std::string &recurso);
+    void desbloquearProcessos(const std::string &recurso);
     bool temProcessosProntos();
-    void setProcessFromFile(const std::string& filename);
+    void setProcessFromFile(const std::string &filename);
 };
 
 #endif
