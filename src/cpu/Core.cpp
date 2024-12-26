@@ -12,6 +12,7 @@ void Core::start()
 {
     isRunning = true;
     coreThread = std::thread(&Core::run, this);
+    std::cout << "[Core] Núcleo iniciado. Thread ID: " << coreThread.get_id() << "\n";
 }
 
 void Core::stop()
@@ -21,6 +22,7 @@ void Core::stop()
     {
         coreThread.join();
     }
+    std::cout << "[Core] Núcleo finalizado. Thread ID: " << coreThread.get_id() << "\n";
 }
 
 void Core::run()
@@ -34,8 +36,8 @@ void Core::run()
 
             {
                 std::lock_guard<std::mutex> lock(coutMutex);
-                std::cout << "[Core " << this_thread::get_id() << "]"
-                          << " Executando processo ID: " << pcb.processID << std::endl;
+                std::cout << "[Core] Executando processo ID: " << pcb.processID
+                          << " com Quantum: " << pcb.quantum << "\n";
             }
 
             executarProcesso(pcb);
@@ -51,10 +53,8 @@ void Core::run()
             }
             else
             {
-                {
-                    std::lock_guard<std::mutex> lock(coutMutex);
-                    std::cout << "Processo ID " << pcb.processID << " concluído." << std::endl;
-                }
+                std::lock_guard<std::mutex> lock(coutMutex);
+                std::cout << "[Core] Processo ID " << pcb.processID << " concluído.\n";
             }
         }
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
@@ -70,9 +70,19 @@ void Core::executarProcesso(ProcessControlBlock &pcb)
     {
         // uc.executarInstrucao(regs, ram, PC, disco, Clock);
         pcb.quantum--;
+
         {
             std::lock_guard<std::mutex> lock(coutMutex);
-            std::cout << "Quantum restante para processo " << pcb.processID << ": " << pcb.quantum << std::endl;
+            std::cout << "[Core] Processo ID " << pcb.processID
+                      << " executando. Quantum restante: " << pcb.quantum << "\n";
+        }
+
+        // Simula bloqueio -> Remover pos testes
+        if (pcb.quantum == 2)
+        {
+            pcb.state = BLOQUEADO;
+            pcb.resource = "teclado";
+            return;
         }
     }
 }
