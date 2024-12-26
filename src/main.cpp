@@ -1,49 +1,49 @@
-#include "includes/Opcode.hpp"
-#include "includes/Instruction.hpp"
-#include "includes/Registers.hpp"
-#include "includes/ULA.hpp"
-#include "includes/UnidadeControle.hpp"
-#include "includes/RAM.hpp"
-#include "includes/InstructionDecode.hpp"
-#include "includes/Pipeline.hpp"
-#include "includes/Core.hpp"
-#include "includes/perifericos.hpp"
 #include "includes/ProcessManager.hpp"
-
-#include <vector>
-#include <iostream>
+#include "includes/Core.hpp"
 #include <thread>
+#include <vector>
 #include <memory>
 
 #define NUM_CORES 2
 
-using namespace std;
+void gerenciarRecursos(ProcessManager &pm)
+{
+    while (true)
+    {
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));
+        pm.desbloquearProcessos("teclado");
+        pm.desbloquearProcessos("disco");
+    }
+}
 
-int main() {
+int main()
+{
     RAM ram;
     Disco disco;
     ProcessManager processManager;
 
-    // Adiciona processos na fila de prontos
     processManager.setProcessFromFile("data/setProcess.txt");
 
-    // Vetor de núcleos usando std::unique_ptr
     std::vector<std::unique_ptr<Core>> cores;
 
-    for (int i = 0; i < NUM_CORES; ++i) {
+    for (int i = 0; i < NUM_CORES; ++i)
+    {
         cores.emplace_back(std::make_unique<Core>(ram, disco, processManager));
-        cores[i]->start(); // Inicia a execução do núcleo
+        cores[i]->start();
     }
 
-    // Simula tempo de execução
+    std::thread gerenciador(gerenciarRecursos, std::ref(processManager));
+
     std::this_thread::sleep_for(std::chrono::seconds(10));
 
-    // Para os núcleos
-    for (auto& core : cores) {
+    for (auto &core : cores)
+    {
         core->stop();
     }
 
-    std::cout << "\nExecução concluída. Todos os núcleos foram parados.\n";
+    gerenciador.detach();
+
+    std::cout << "Execução concluída.\n";
 
     return 0;
 }
