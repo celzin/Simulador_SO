@@ -3,6 +3,7 @@
 void ProcessManager::adicionarProcesso(const ProcessControlBlock& pcb) {
     std::lock_guard<std::mutex> lock(mtx);
     filaProntos.push(pcb);
+    std::cout << "[ProcessManager] Processo ID " << pcb.processID << " movido para PRONTO." << std::endl;
 }
 
 ProcessControlBlock ProcessManager::obterProximoProcesso() {
@@ -10,6 +11,7 @@ ProcessControlBlock ProcessManager::obterProximoProcesso() {
     if (!filaProntos.empty()) {
         ProcessControlBlock pcb = filaProntos.front();
         filaProntos.pop();
+        std::cout << "[ProcessManager] Processo ID " << pcb.processID << " retirado da fila FCFS." << std::endl;
         return pcb;
     }
     return ProcessControlBlock(-1, 0, 0); // Nenhum processo disponível

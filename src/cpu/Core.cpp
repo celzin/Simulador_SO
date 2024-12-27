@@ -20,7 +20,7 @@ void Core::run() {
         if (processManager.temProcessosProntos()) {
             ProcessControlBlock pcb = processManager.obterProximoProcesso();
             pcb.state = EXECUTANDO;
-            std::cout << "Core executando processo ID: " << pcb.processID << std::endl;
+            std::cout << "[Core " << std::this_thread::get_id() << "] Executando processo ID: " << pcb.processID << std::endl;
 
             executarProcesso(pcb);
 
@@ -28,8 +28,9 @@ void Core::run() {
                 pcb.saveState(PC, regs);
                 pcb.state = PRONTO;
                 processManager.adicionarProcesso(pcb);
+                std::cout << "[Core " << std::this_thread::get_id() << "] Quantum expirado. Processo ID " << pcb.processID << " movido para PRONTO." << std::endl;
             } else {
-                std::cout << "Processo ID " << pcb.processID << " concluído." << std::endl;
+                std::cout << "[Core " << std::this_thread::get_id() << "] Processo ID " << pcb.processID << " concluído." << std::endl;
             }
         }
         std::this_thread::sleep_for(std::chrono::milliseconds(100)); // Simula tempo de clock
@@ -41,7 +42,7 @@ void Core::executarProcesso(ProcessControlBlock& pcb) {
     regs = pcb.regs;
 
     while (pcb.quantum > 0 && isRunning) {
-        uc.executarInstrucao(regs, ram, PC, disco, Clock);
+        // uc.executarInstrucao(regs, ram, PC, disco, Clock);
         pcb.quantum--;
         std::cout << "Quantum restante para processo " << pcb.processID << ": " << pcb.quantum << std::endl;
     }
