@@ -15,6 +15,7 @@
 
 class Core {
 public:
+    int id; // Identificador único do núcleo
     Registers regs;
     UnidadeControle uc;
     int PC;
@@ -23,7 +24,7 @@ public:
     int Clock;
     PCB* processoAtual; // PCB do processo em execução
 
-    Core(RAM& ram, Disco& disco);
+    Core(int id, RAM& ram, Disco& disco);
     void executarProcesso(); // Executa o processo atual
     void setProcesso(PCB* processo); // Configura o processo a ser executado
 };
