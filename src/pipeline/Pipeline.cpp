@@ -38,10 +38,10 @@ void Pipeline::PipelineProcess(Registers& regs, RAM& ram, int& PC, const string&
         
         PC += 4;
 
-        cout << "REGS:" << endl;
+        // cout << endl << "REGS:" << endl;
         regs.display(); 
 
-        cout << "Clock: " << Clock << endl;
+        cout << "Clock: " << Clock << endl << endl;
     }
 }
 
@@ -143,8 +143,8 @@ void Pipeline::Execute(const DecodedInstruction& decoded, Registers& regs, RAM& 
         }
         case ENQ: {
             int resultado = decoded.value1;
-            cout << "OPERADOR 1: " << decoded.value1 << endl;
-            cout << "OPERADOR 2: " << decoded.value2 << endl;
+            // cout << "OPERADOR 1: " << decoded.value1 << endl;
+            // cout << "OPERADOR 2: " << decoded.value2 << endl;
             
             while (resultado != decoded.value2) {
                 if (resultado < decoded.value2) {

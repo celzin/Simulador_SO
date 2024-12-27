@@ -20,7 +20,7 @@ void Core::run() {
         if (processManager.temProcessosProntos()) {
             ProcessControlBlock pcb = processManager.obterProximoProcesso();
             pcb.state = EXECUTANDO;
-            std::cout << "Core executando processo ID: " << pcb.processID << std::endl;
+            std::cout << endl << "Core executando processo ID: " << pcb.processID << std::endl;
 
             executarProcesso(pcb);
 
