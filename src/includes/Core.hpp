@@ -8,6 +8,7 @@
 #include "Pipeline.hpp"
 #include "Disco.hpp"
 #include "Pipeline.hpp"
+#include "PCB.hpp"
 
 class Core {
 public:
@@ -18,15 +19,8 @@ public:
     Disco& disco;
     int Clock;
 
+    ProcessControlBlock* currentProcess; // PCB associado ao Core
     Core(RAM& ram, Disco& disco);
     void activate();
+    void loadProcess(ProcessControlBlock* pcb); // Carrega um PCB no Core
 };
-
-/*
-tem que ter uma classe propria pra pipiline com os 5 estagios la dentro, herdando e usando.
-classe de registradores para controlar os regs e pc
-classe ula tem que fazer a parte do exec da pipeline
-classe unidade de controle ela herda a pipeline e a ULA pra gerenciar
-A core tem as classes
-a uc tem que verificar o que esta fazendo
-*/

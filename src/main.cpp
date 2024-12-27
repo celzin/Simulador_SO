@@ -15,42 +15,48 @@
 
 using namespace std;
 
+// Exemplo de geração de PCBs para teste
+std::vector<ProcessControlBlock> createTestPCBs() {
+    std::vector<ProcessControlBlock> pcbs;
+    pcbs.emplace_back(1, 100, 30);
+    pcbs.emplace_back(2, 101, 25);
+    pcbs.emplace_back(3, 102, 20);
+    return pcbs;
+}
+
 int main() {
-    // Criando três PCBs simulados
-    ProcessControlBlock pcb1(1, 100, 30);
-    ProcessControlBlock pcb2(2, 101, 25);
-    ProcessControlBlock pcb3(3, 102, 20);
+    RAM ram;
+    Disco disco;
+    std::vector<Core> cores;
+    Perifericos periferico;
 
-    // Exibindo informações iniciais
-    std::cout << "PCB1 - ID: " << pcb1.process_id << ", Estado: " << pcb1.getState() << ", Quantum: " << pcb1.getQuantum() << std::endl;
-    std::cout << "PCB2 - ID: " << pcb2.process_id << ", Estado: " << pcb2.getState() << ", Quantum: " << pcb2.getQuantum() << std::endl;
+    periferico.estadoPeriferico("teclado", true);
+    periferico.estadoPeriferico("mouse", true);
 
-    // Alterando estados e PC
-    pcb1.setState(Running);
-    pcb1.updatePC(10);
-    pcb2.setState(Blocked);
-
-    std::cout << "PCB1 - Novo Estado: " << pcb1.getState() << ", Novo PC: " << pcb1.getPC() << std::endl;
-    std::cout << "PCB2 - Novo Estado: " << pcb2.getState() << std::endl;
-
-    // Adicionando e removendo recursos
-    pcb1.addResource("arquivo1.txt");
-    pcb1.addResource("arquivo2.txt");
-    std::cout << "PCB1 - Recursos após adições: ";
-    for (const auto& res : pcb1.resources) {
-        std::cout << res << " ";
+    for (int i = 0; i < 2; i++) {
+        cores.emplace_back(ram, disco);
     }
-    std::cout << std::endl;
 
-    pcb1.removeResource("arquivo1.txt");
-    std::cout << "PCB1 - Recursos após remoção: ";
-    for (const auto& res : pcb1.resources) {
-        std::cout << res << " ";
+    // Criando PCBs de teste
+    auto pcbs = createTestPCBs();
+
+    // Carregando processos nos núcleos e ativando
+    for (size_t i = 0; i < cores.size(); ++i) {
+        if (i < pcbs.size()) {
+            cores[i].loadProcess(&pcbs[i]);
+            cores[i].activate();
+        }
     }
-    std::cout << std::endl;
 
-    // Testando remoção de recurso inexistente
-    pcb1.removeResource("recurso_inexistente");
+    // Exibindo estado final da RAM e do disco
+    std::cout << "\nDados RAM\n";
+    ram.display();
+
+    std::cout << "\nDados DISCO\n";
+    disco.display();
+
+    std::cout << "\nEstado atual da RAM:\n";
+    ram.displayI();
 
     return 0;
 }
