@@ -19,8 +19,10 @@ void GerenciadorThreads::iniciar() {
 
                 if (processo == nullptr) break; // Sem mais processos para executar
 
+                std::cout << "\n[Core " << core->id << "] Iniciando processo " << processo->pid << ".\n";
                 core->setProcesso(processo);
                 core->executarProcesso();
+                std::cout << "[Core " << core->id << "] Processo " << processo->pid << " finalizado.\n";
             }
 
             std::cout << "[Core " << core->id << "] Nenhum processo restante. Finalizando thread.\n";

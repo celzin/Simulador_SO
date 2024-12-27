@@ -13,11 +13,14 @@ void Core::setProcesso(PCB* processo) {
 
 void Core::executarProcesso() {
     if (processoAtual == nullptr) {
-        std::cerr << "Nenhum processo atribuído ao Core " << id << "!\n";
+        std::cerr << "[Core " << id << "] Nenhum processo atribuído!\n";
         return;
     }
 
-    std::cout << "[Core " << id << "] Iniciando execução do processo " << processoAtual->pid << "\n";
+    std::cout << "[Core " << id << "] Iniciando execução do processo " << processoAtual->pid << ".\n";
+
+    std::cout << "Estado inicial dos registradores:\n";
+    regs.display();
 
     while (processoAtual->quantum > 0 && PC < processoAtual->instrucoes.size() * 4) {
         Instruction instr = processoAtual->instrucoes[PC / 4];
@@ -27,14 +30,12 @@ void Core::executarProcesso() {
 
         processoAtual->quantum--; // Reduz o quantum do processo
         PC += 4; // Avança o PC
-
-        std::cout << "[Core " << id << "] Processo " << processoAtual->pid
-                  << " executou instrução com opcode " << instr.op << ".\n";
     }
 
     // Atualiza o PCB com o estado atual
     processoAtual->PC = PC;
     processoAtual->registradores = regs.getAll();
 
-    std::cout << "[Core " << id << "] Processo " << processoAtual->pid << " finalizado ou preemptado.\n";
+    std::cout << "[Core " << id << "] Estado final dos registradores para o processo " << processoAtual->pid << ":\n";
+    regs.display();
 }
