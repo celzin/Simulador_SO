@@ -34,6 +34,19 @@ public:
 
     void addResource(const std::string& resource);
     void removeResource(const std::string& resource);
+
+    void display() const {
+        std::cout << std::endl << "Process ID: " << process_id << "\n"
+                  << "State: " << (state == Ready ? "Pronto" : state == Blocked ? "Bloqueado" : "Executando") << "\n"
+                  << "PC: " << pc << "\n"
+                  << "Quantum: " << quantum << "\n"
+                  << "Memory Page ID: " << memory_page_id << "\n"
+                  << "Resources: ";
+        for (const auto& res : resources) {
+            std::cout << res << " ";
+        }
+        std::cout << "\n-----------------------------\n";
+    }
 };
 
 #endif

@@ -16,10 +16,19 @@ void Core::activate() {
         return;
     }
 
-    // uc.executarInstrucao(regs, ram, PC, disco, Clock);
-    currentProcess->updatePC(PC); // Atualiza o PCB com o PC atual
+    // Exibir o estado inicial do PCB
+    std::cout << "Estado inicial do PCB:\n";
+    currentProcess->display();
 
-    // Simulação de término de execução para teste
-    currentProcess->setState(Ready); // Exemplo de alternância de estado
+    uc.executarInstrucao(regs, ram, PC, disco, Clock);
+
+    // Atualizar o PCB após a execução
+    currentProcess->updatePC(PC);
+    currentProcess->setState(Ready); // Simulação de troca de estado
+
+    // Exibir o estado final do PCB
+    std::cout << "Estado final do PCB após execução:\n";
+    currentProcess->display();
+
     std::cout << "Processo " << currentProcess->process_id << " concluído no Core.\n";
 }
