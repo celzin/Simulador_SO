@@ -22,6 +22,8 @@ void GerenciadorThreads::iniciar() {
                 core->setProcesso(processo);
                 core->executarProcesso();
             }
+
+            std::cout << "[Core " << core->id << "] Nenhum processo restante. Finalizando thread.\n";
         });
     }
 

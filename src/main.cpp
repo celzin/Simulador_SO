@@ -15,7 +15,7 @@ int main() {
     // Criando múltiplos núcleos
     std::vector<Core*> cores;
     for (int i = 0; i < 2; i++) { // 2 núcleos
-        cores.push_back(new Core(ram, disco));
+        cores.push_back(new Core(i, ram, disco)); // ID do núcleo
     }
 
     // Gerenciador de processos
