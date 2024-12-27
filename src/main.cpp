@@ -8,6 +8,8 @@
 #include "includes/Pipeline.hpp"
 #include "includes/Core.hpp"
 #include "includes/perifericos.hpp"
+#include "includes/PCB.hpp"
+#include "includes/GerenciadorProcessos.hpp"
 
 #include <vector>
 #include <iostream>
@@ -15,46 +17,31 @@
 using namespace std;
 
 int main() {
+    // Criação do gerenciador de processos
+    GerenciadorProcessos gerenciador;
 
-    RAM ram;
-    Disco disco;
-    vector<Core> cores;
-    Perifericos periferico;
+    // Criação de instruções fictícias
+    std::vector<Instruction> instr1 = {Instruction(ADD, 0, 1, 2), Instruction(SUB, 1, 0, 3)};
+    std::vector<Instruction> instr2 = {Instruction(MULT, 2, 3, 4), Instruction(DIV, 4, 3, 2)};
 
-    periferico.estadoPeriferico("teclado", true);
-    periferico.estadoPeriferico("mouse", true);
+    // Criação de processos
+    PCB processo1(1, instr1, 5); // ID: 1, Quantum: 5
+    PCB processo2(2, instr2, 5); // ID: 2, Quantum: 5
 
-    for (int i = 0; i < 2; i++)
-    {   cout << "CORE " << i << ": " << endl;
-        cores.emplace_back(ram, disco);
-        cout << endl << endl << endl;
-    }
+    // Adicionar processos ao gerenciador
+    gerenciador.adicionarProcesso(&processo1);
+    gerenciador.adicionarProcesso(&processo2);
 
-    cout << "Utilizando o Core 0:" << endl;
-    cores[0].activate();
+    // Mostrar estados iniciais
+    gerenciador.mostrarEstados();
 
-    cout << "\nDados RAM\n";
-    ram.display();
+    // Bloquear um processo e mostrar estados
+    gerenciador.bloquearProcesso(&processo1);
+    gerenciador.mostrarEstados();
 
-    cout << "\nDados DISCO\n";
-    disco.display();
-
-    cout << "\nEstado atual da RAM:\n";
-    ram.displayI();
-    
+    // Desbloquear processos e mostrar estados
+    gerenciador.desbloquearProcessos();
+    gerenciador.mostrarEstados();
 
     return 0;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
