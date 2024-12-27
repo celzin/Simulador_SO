@@ -1,3 +1,6 @@
+#ifndef CORE_HPP
+#define CORE_HPP
+
 #include "Opcode.hpp"
 #include "Instruction.hpp"
 #include "Registers.hpp"
@@ -24,3 +27,5 @@ public:
     void executarProcesso(); // Executa o processo atual
     void setProcesso(PCB* processo); // Configura o processo a ser executado
 };
+
+#endif
