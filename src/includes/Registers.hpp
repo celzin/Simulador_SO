@@ -1,6 +1,6 @@
 #ifndef REGISTERS_HPP
 #define REGISTERS_HPP
-#define NUM_REGISTRADORES 32
+#define NUM_REGISTRADORES 12
 
 #include <iostream>
 #include <vector>
