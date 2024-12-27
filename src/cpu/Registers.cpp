@@ -2,6 +2,14 @@
 
 Registers::Registers() : registradores(NUM_REGISTRADORES, make_pair(0, false)) {}
 
+std::vector<int> Registers::getAll() const {
+    std::vector<int> valores;
+    for (const auto& reg : registradores) {
+        valores.push_back(reg.first); // Adiciona o valor de cada registrador
+    }
+    return valores;
+}
+
 int Registers::get(int index) const {
     if (index >= 0 && index < registradores.size()) {
         return registradores[index].first;
