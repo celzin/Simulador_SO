@@ -5,11 +5,15 @@ void GerenciadorProcessos::adicionarProcesso(PCB* processo) {
     std::cout << "Processo " << processo->pid << " adicionado à fila de prontos." << std::endl;
 }
 
+bool GerenciadorProcessos::temProcessos() const {
+    return !filaProntos.empty();
+}
+
 PCB* GerenciadorProcessos::obterProximoProcesso() {
     if (filaProntos.empty()) {
-        std::cerr << "Erro: Nenhum processo na fila de prontos!" << std::endl;
-        return nullptr;
+        return nullptr; // Retorna nullptr se não houver processos
     }
+
     PCB* processo = filaProntos.front();
     filaProntos.pop();
     return processo;

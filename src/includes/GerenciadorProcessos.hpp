@@ -17,6 +17,7 @@ public:
     void bloquearProcesso(PCB* processo);
     void desbloquearProcessos(); // Simula desbloqueio periódico
     void mostrarEstados() const; // Exibe os estados das filas
+    bool temProcessos() const;
 };
 
 #endif
