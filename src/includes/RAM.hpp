@@ -3,16 +3,20 @@
 
 #include <iostream>
 #include <vector>
+#include <unordered_map>
 #include "Instruction.hpp"
-#include "InstructionDecode.hpp"
 
 class RAM {
 private:
+    std::unordered_map<int, int> tabelaPaginas; // Mapeamento de endereços lógicos -> físicos
+    std::vector<bool> paginasOcupadas;         // Controle de páginas ocupadas
 
 public:
-    vector<int> memoria;
-    vector<Instruction> instruction_memory;
-    static const int tamanho = 12;
+    static const int tamanho = 12;             // Tamanho total da memória
+    static const int tamanhoPagina = 4;        // Tamanho de cada página
+
+    std::vector<int> memoria;
+    std::vector<Instruction> instruction_memory;
 
     RAM();
 
@@ -22,6 +26,8 @@ public:
     void writeInstruction(int endereco, const Instruction& instr);
     Instruction fetchInstruction(int endereco) const;
 
+    int alocarPagina(int processoId);
+    void liberarPagina(int processoId);
     void display() const;
     void displayI() const;
 };
