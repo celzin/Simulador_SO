@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <string>
+#include <iostream>
 #include "Instruction.hpp"
 
 // Estados de processo
@@ -22,6 +23,7 @@ public:
     std::vector<Instruction> instrucoes; // Instruções carregadas na memória
 
     PCB(int id, const std::vector<Instruction>& instrs, int quantumInicial);
+    void displayPCB() const;
 };
 
 #endif
