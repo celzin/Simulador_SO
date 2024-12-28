@@ -5,10 +5,20 @@
 #include <vector>
 #include <unordered_map>
 #include "Instruction.hpp"
+#include <unordered_map>
+
+struct hash_pair {
+    template <class T1, class T2>
+    std::size_t operator()(const std::pair<T1, T2>& p) const {
+        auto hash1 = std::hash<T1>{}(p.first);
+        auto hash2 = std::hash<T2>{}(p.second);
+        return hash1 ^ hash2;
+    }
+};
 
 class RAM {
 private:
-    std::unordered_map<int, int> tabelaPaginas; // Mapeamento de endereços lógicos -> físicos
+    std::unordered_map<std::pair<int, int>, int, hash_pair> tabelaPaginas;
     std::vector<bool> paginasOcupadas;         // Controle de páginas ocupadas
 
 public:
@@ -26,6 +36,7 @@ public:
     void writeInstruction(int endereco, const Instruction& instr);
     Instruction fetchInstruction(int endereco) const;
 
+    int currentProcessId;
     int alocarPagina(int processoId);
     void liberarPagina(int processoId);
     void display() const;

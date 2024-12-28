@@ -7,47 +7,82 @@ int RAM::alocarPagina(int processoId) {
     for (size_t i = 0; i < paginasOcupadas.size(); ++i) {
         if (!paginasOcupadas[i]) {
             paginasOcupadas[i] = true;
-            tabelaPaginas[processoId * tamanhoPagina + i] = i * tamanhoPagina; // Mapeia a página para o processo
+            tabelaPaginas[{processoId, i}] = i * tamanhoPagina; // Mapeia para o processo e página lógica
+            std::cout << "[DEBUG] Página lógica " << i << " do processo " << processoId 
+                      << " mapeada para endereço físico " << i * tamanhoPagina << std::endl;
             return i;
         }
     }
-    std::cerr << "Erro: Não há páginas disponíveis na RAM!" << std::endl;
+    std::cerr << "[DEBUG] Erro: Não há páginas disponíveis na RAM!" << std::endl;
     return -1;
 }
 
 // Libera páginas associadas a um processo
 void RAM::liberarPagina(int processoId) {
+    bool liberada = false;
+
     for (auto it = tabelaPaginas.begin(); it != tabelaPaginas.end();) {
-        if (it->first / tamanhoPagina == processoId) {
-            paginasOcupadas[it->second / tamanhoPagina] = false;
-            it = tabelaPaginas.erase(it);
+        // Verifica se a entrada corresponde ao processoId
+        if (it->first.first == processoId) {
+            int enderecoFisico = it->second; // Obtém o endereço físico
+            int paginaFisica = enderecoFisico / tamanhoPagina; // Calcula a página física a partir do endereço
+            paginasOcupadas[paginaFisica] = false; // Marca a página física como livre
+
+            std::cout << "[DEBUG] Página lógica " << it->first.second 
+                      << " liberada do processo " << processoId << std::endl;
+
+            it = tabelaPaginas.erase(it); // Remove a entrada da tabela de páginas
+            liberada = true;
         } else {
             ++it;
         }
     }
+
+    if (!liberada) {
+        std::cerr << "[DEBUG] Erro: Nenhuma página alocada para o processo " 
+                  << processoId << " foi encontrada!" << std::endl;
+    }
 }
 
-// Escrita considerando paginação
 void RAM::write(int endereco, int valor) {
-    auto it = tabelaPaginas.find(endereco / tamanhoPagina);
+    int paginaLogica = endereco / tamanhoPagina; // Página lógica
+    int offset = endereco % tamanhoPagina;       // Offset
+
+    auto it = tabelaPaginas.find({currentProcessId, paginaLogica});
     if (it != tabelaPaginas.end()) {
-        int paginaFisica = it->second;
-        int offset = endereco % tamanhoPagina;
-        memoria[paginaFisica + offset] = valor;
+        int enderecoFisico = it->second + offset;
+        if (enderecoFisico >= 0 && enderecoFisico < tamanho) {
+            memoria[enderecoFisico] = valor;
+            std::cout << "[DEBUG] Valor " << valor << " escrito no endereço físico " << enderecoFisico 
+                      << " (Página Lógica: " << paginaLogica << ", Offset: " << offset << ")" << std::endl;
+            return;
+        } else {
+            std::cerr << "[DEBUG] Erro: Endereço físico " << enderecoFisico << " fora da RAM!" << std::endl;
+        }
     } else {
-        std::cerr << "Erro: Endereço lógico não mapeado para RAM!" << std::endl;
+        std::cerr << "[DEBUG] Erro: Página lógica " << paginaLogica 
+                  << " do processo " << currentProcessId << " não mapeada para RAM!" << std::endl;
     }
 }
 
-// Leitura considerando paginação
 int RAM::read(int endereco) {
-    auto it = tabelaPaginas.find(endereco / tamanhoPagina);
+    int paginaLogica = endereco / tamanhoPagina; // Página lógica
+    int offset = endereco % tamanhoPagina;       // Offset
+
+    auto it = tabelaPaginas.find({currentProcessId, paginaLogica});
     if (it != tabelaPaginas.end()) {
-        int paginaFisica = it->second;
-        int offset = endereco % tamanhoPagina;
-        return memoria[paginaFisica + offset];
+        int enderecoFisico = it->second + offset;
+        if (enderecoFisico >= 0 && enderecoFisico < tamanho) {
+            std::cout << "[DEBUG] Valor " << memoria[enderecoFisico] << " lido do endereço físico " << enderecoFisico 
+                      << " (Página Lógica: " << paginaLogica << ", Offset: " << offset << ")" << std::endl;
+            return memoria[enderecoFisico];
+        } else {
+            std::cerr << "[DEBUG] Erro: Endereço físico " << enderecoFisico << " fora da RAM!" << std::endl;
+        }
+    } else {
+        std::cerr << "[DEBUG] Erro: Página lógica " << paginaLogica 
+                  << " do processo " << currentProcessId << " não mapeada para RAM!" << std::endl;
     }
-    std::cerr << "Erro: Endereço lógico não mapeado para RAM!" << std::endl;
     return -1;
 }
 
