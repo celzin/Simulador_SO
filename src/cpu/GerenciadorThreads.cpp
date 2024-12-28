@@ -21,13 +21,13 @@ void GerenciadorThreads::iniciar() {
 
                 if (processo == nullptr) break; // Sem mais processos para executar
 
-                std::cout << "\n[Core " << core->id << "] Iniciando processo " << processo->pid << ".\n";
+                std::cout << "\n\033[34m[Core " << core->id << "] Iniciando processo " << processo->pid << ".\033[0m\n";
                 core->setProcesso(processo);
                 core->executarProcesso();
-                std::cout << "[Core " << core->id << "] Processo " << processo->pid << " finalizado.\n";
+                std::cout << "\033[32m[Core " << core->id << "] Processo " << processo->pid << " finalizado.\033[0m\n";
             }
 
-            std::cout << "[Core " << core->id << "] Nenhum processo restante. Finalizando thread.\n";
+            std::cout << "\033[31m[Core " << core->id << "] Nenhum processo restante. Finalizando thread.\033[0m\n";
         });
     }
 

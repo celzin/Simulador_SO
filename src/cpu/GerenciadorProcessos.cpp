@@ -1,6 +1,7 @@
 #include "../includes/GerenciadorProcessos.hpp"
 
 void GerenciadorProcessos::adicionarProcesso(PCB* processo) {
+    // std::cout << "[DEBUG] Adicionando processo com ID: " << processo->pid << ", Quantum: " << processo->quantum << ", PC: " << processo->PC << std::endl; 
     filaProntos.push(processo);
     std::cout << "Processo " << processo->pid << " adicionado à fila de prontos." << std::endl;
 }

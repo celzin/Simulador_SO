@@ -13,6 +13,9 @@
 #include "Pipeline.hpp"
 #include "PCB.hpp"
 
+#include <thread>
+#include <atomic>
+
 class Core {
 public:
     int id; // Identificador único do núcleo
@@ -22,9 +25,10 @@ public:
     RAM& ram;
     Disco& disco;
     int Clock;
+    int& instructionAddress; 
     PCB* processoAtual; // PCB do processo em execução
 
-    Core(int id, RAM& ram, Disco& disco);
+    Core(int id, Registers& regs, RAM& ram, Disco& disco, int& instructionAddress);
     void executarProcesso(); // Executa o processo atual
     void setProcesso(PCB* processo); // Configura o processo a ser executado
 };

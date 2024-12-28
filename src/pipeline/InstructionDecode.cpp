@@ -6,5 +6,6 @@ DecodedInstruction InstructionDecode(const Instruction& instr, const Registers& 
     decoded.destiny = instr.Destiny_Register;
     decoded.value1 = regs.get(instr.Register_1);
     decoded.value2 = regs.get(instr.Register_2);
+
     return decoded;
 }

@@ -5,6 +5,7 @@
 #include <string>
 #include <iostream>
 #include "Instruction.hpp"
+#include "Registers.hpp"
 
 // Estados de processo
 enum ProcessState {
@@ -22,7 +23,7 @@ public:
     std::vector<int> registradores;  // Registradores do processo
     std::vector<Instruction> instrucoes; // Instruções carregadas na memória
 
-    PCB(int id, const std::vector<Instruction>& instrs, int quantumInicial);
+    PCB(int id, const std::vector<Instruction>& instrs, int quantumInicial, const Registers& regs);
     void displayPCB() const;
 };
 

@@ -1,6 +1,8 @@
 #ifndef DISCO_HPP
 #define DISCO_HPP
 
+#include "Registers.hpp"
+#include "RAM.hpp"
 #include <iostream>
 #include <vector>
 
@@ -15,7 +17,9 @@ public:
     Disco(); 
 
     void write(int valor); 
-    void display() const;  
+    void display() const;
+    void setRegistersFromFile(Registers& regs, const std::string& regsFilename);
+    int loadInstructionsFromFile(RAM& ram, const std::string& instrFilename);
 };
 
 #endif

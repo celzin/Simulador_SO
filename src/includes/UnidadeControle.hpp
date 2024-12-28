@@ -17,7 +17,7 @@ private:
     Pipeline pipeline;
 
 public:
-    void executarInstrucao(Registers& regs, RAM& ram, int& PC, Disco& disco, int& Clock);
+    void executarInstrucao(Registers& regs, RAM& ram, int& PC, Disco& disco, int& Clock, int instructionAddress);
 };
 
 #endif
