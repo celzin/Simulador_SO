@@ -10,17 +10,8 @@ using namespace std;
 
 Pipeline::Pipeline() {}
 
-void Pipeline::PipelineProcess(Registers& regs, RAM& ram, int& PC, const string& instrFilename, const string& regsFilename, Disco& disco, int& Clock) {
+void Pipeline::PipelineProcess(Registers& regs, RAM& ram, int& PC, Disco& disco, int& Clock, int& instructionAddress) {
     
-    setRegistersFromFile(regs, regsFilename);
-
-    int instructionAddress = loadInstructionsFromFile(ram, instrFilename);
-
-    if (instructionAddress == -1) {
-        cerr << "Erro ao carregar as instruções." << endl;
-        return;
-    }
-
     while (PC < instructionAddress * 4) {
         Instruction instr = InstructionFetch(ram, PC / 4);
         Clock++;
@@ -163,74 +154,4 @@ void Pipeline::Execute(const DecodedInstruction& decoded, Registers& regs, RAM& 
         default:
             cerr << "Opcode desconhecido: " << decoded.opcode << endl;
     }
-}
-
-void Pipeline::setRegistersFromFile(Registers& regs, const string& regsFilename) {
-    ifstream regsFile(regsFilename);
-    if (!regsFile.is_open()) {
-        cerr << "Erro ao abrir o arquivo de registradores: " << regsFilename << endl;
-        return;
-    }
-
-    string line;
-    while (getline(regsFile, line)) {
-        int regNum, regValue;
-        char virgula;
-        stringstream ss(line);
-
-        ss >> regNum >> virgula >> regValue;
-        regs.set(regNum, regValue); 
-    }
-    regsFile.close();
-}
-
-int Pipeline::loadInstructionsFromFile(RAM& ram, const string& instrFilename) {
-    ifstream file(instrFilename);
-    if (!file.is_open()) {
-        cerr << "Erro ao abrir o arquivo de instruções: " << instrFilename << endl;
-        return -1;
-    }
-
-    string line;
-    int instructionAddress = 0;
-
-    while (getline(file, line)) {
-        string opcodeStr;
-        int reg1, reg2, reg3;
-        char virgula;
-
-        stringstream ss(line);
-
-        getline(ss, opcodeStr, ',');
-
-        opcodeStr.erase(remove_if(opcodeStr.begin(), opcodeStr.end(), ::isspace), opcodeStr.end());
-
-        ss >> reg1 >> virgula >> reg2 >> virgula >> reg3;
-
-        Opcode opcode;
-        if (opcodeStr == "ADD") opcode = ADD;
-        else if (opcodeStr == "SUB") opcode = SUB;
-        else if (opcodeStr == "AND") opcode = AND;
-        else if (opcodeStr == "OR") opcode = OR;
-        else if (opcodeStr == "STORE") opcode = STORE;
-        else if (opcodeStr == "LOAD") opcode = LOAD;
-        else if (opcodeStr == "ENQ") opcode = ENQ;
-        else if (opcodeStr == "IF_igual") opcode = IF_igual;
-        else {
-            cerr << "Erro: Instrução inválida no arquivo: " << opcodeStr << endl;
-            continue;
-        }
-
-        Instruction instr(opcode, reg1, reg2, reg3);
-
-        if (instructionAddress < ram.tamanho) {
-            ram.instruction_memory[instructionAddress++] = instr;
-        } else {
-            cerr << "Erro: memória RAM cheia, não é possível carregar mais instruções." << endl;
-            break;
-        }
-    }
-    file.close();
-
-    return instructionAddress;
 }

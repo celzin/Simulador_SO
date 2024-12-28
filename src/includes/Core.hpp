@@ -26,8 +26,9 @@ public:
     Disco& disco;
     ProcessManager& processManager;
     int Clock;
+    int& instructionAddress; 
 
-    Core(RAM& ram, Disco& disco, ProcessManager& pm);
+    Core(Registers& regs, RAM& ram, Disco& disco, ProcessManager& pm, int& instructionAddress);
     void start();     // Inicia a thread do Core
     void stop();      // Para a thread do Core
     void run();       // Executa a lógica de execução (loop do core)

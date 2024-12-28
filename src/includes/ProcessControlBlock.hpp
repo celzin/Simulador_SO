@@ -19,8 +19,8 @@ public:
     Registers regs;                // Estado dos registradores
     std::string resource;          // Recurso aguardado (se bloqueado)
 
-    ProcessControlBlock(int id, int pc, int q)
-        : processID(id), state(PRONTO), PC(pc), quantum(q), resource("") {}
+    ProcessControlBlock(int id, int pc, int q, const Registers& initialRegs = Registers())
+        : processID(id), state(PRONTO), PC(pc), quantum(q), regs(initialRegs), resource("") {}
 
     void saveState(int pc, const Registers& registers);
     void restoreState(int& pc, Registers& registers);
