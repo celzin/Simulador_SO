@@ -9,12 +9,14 @@ void GerenciadorThreads::iniciar() {
     for (Core* core : cores) {
         threads.emplace_back([core, this]() {
             while (true) {
-                PCB* processo;
+                PCB* processo = nullptr;
 
-                // Acessar a fila de prontos com exclusão mútua
+                // Verificar se há processos disponíveis
                 {
                     std::lock_guard<std::mutex> lock(this->mutex);
-                    processo = gerenciadorProcessos.obterProximoProcesso();
+                    if (gerenciadorProcessos.temProcessos()) {
+                        processo = gerenciadorProcessos.obterProximoProcesso();
+                    }
                 }
 
                 if (processo == nullptr) break; // Sem mais processos para executar
@@ -34,3 +36,4 @@ void GerenciadorThreads::iniciar() {
         t.join();
     }
 }
+
