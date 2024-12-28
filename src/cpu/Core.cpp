@@ -17,25 +17,28 @@ void Core::executarProcesso() {
         return;
     }
 
-    std::cout << "[Core " << id << "] Iniciando execução do processo " << processoAtual->pid << ".\n";
+    // Exibir o PCB antes da execução
+    std::cout << "[Core " << id << "] Informações do processo antes da execução:\n";
+    processoAtual->displayPCB();
+    // std::cout << "Estado inicial dos registradores:\n";
+    // regs.display();
 
-    std::cout << "Estado inicial dos registradores:\n";
-    regs.display();
-
+    // Execução do processo
     while (processoAtual->quantum > 0 && PC < processoAtual->instrucoes.size() * 4) {
         Instruction instr = processoAtual->instrucoes[PC / 4];
-
         DecodedInstruction decoded = InstructionDecode(instr, regs);
         uc.executarInstrucao(regs, ram, PC, disco, Clock);
 
-        processoAtual->quantum--; // Reduz o quantum do processo
-        PC += 4; // Avança o PC
+        processoAtual->quantum--;
+        PC += 4;
     }
 
-    // Atualiza o PCB com o estado atual
+    // Atualizar PCB com o estado final
     processoAtual->PC = PC;
     processoAtual->registradores = regs.getAll();
 
-    std::cout << "[Core " << id << "] Estado final dos registradores para o processo " << processoAtual->pid << ":\n";
-    regs.display();
+    // Exibir o PCB após a execução
+    std::cout << "[Core " << id << "] Informações do processo após a execução:\n";
+    // regs.display();
+    processoAtual->displayPCB();
 }
