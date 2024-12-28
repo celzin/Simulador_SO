@@ -27,6 +27,7 @@ public:
     Core(int id, RAM& ram, Disco& disco);
     void executarProcesso(); // Executa o processo atual
     void setProcesso(PCB* processo); // Configura o processo a ser executado
+    void alocarPaginas(PCB& processo); // Método para alocar páginas para o processo
 };
 
 #endif

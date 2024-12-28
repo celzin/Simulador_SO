@@ -4,10 +4,28 @@ Core::Core(int id, RAM& ram, Disco& disco) : id(id), ram(ram), disco(disco), PC(
     std::cout << "Core " << id << " inicializado com RAM e Disco\n";
 }
 
+void Core::alocarPaginas(PCB& processo) {
+    int numPaginasNecessarias = (processo.instrucoes.size() + RAM::tamanhoPagina - 1) / RAM::tamanhoPagina;
+
+    for (int i = 0; i < numPaginasNecessarias; ++i) {
+        int paginaLogica = i;
+        int enderecoFisico = ram.alocarPagina(processo.pid);
+        if (enderecoFisico == -1) {
+            std::cerr << "[Core " << id << "] Erro ao alocar páginas para o processo " << processo.pid << std::endl;
+            return;
+        }
+        processo.tabelaPaginas[paginaLogica] = enderecoFisico;
+    }
+    std::cout << "[Core " << id << "] Páginas alocadas para o processo " << processo.pid << std::endl;
+}
+
 void Core::setProcesso(PCB* processo) {
     processoAtual = processo;
+
+    alocarPaginas(*processo);
+
     PC = processo->PC;
-    regs = Registers(); // Reinicializa os registradores
+    regs = Registers();
     std::cout << "Processo " << processo->pid << " atribuído ao Core " << id << ".\n";
 }
 
