@@ -7,7 +7,6 @@
 #include "Core.hpp"
 
 #include <vector>
-#include <memory>
 
 class Bootloader {
     public:

@@ -2,7 +2,6 @@
 #define PCB_HPP
 
 #include <vector>
-#include <string>
 #include <iostream>
 #include "Instruction.hpp"
 #include "Registers.hpp"

@@ -2,13 +2,11 @@
 #define PIPELINE_HPP
 
 #include "Disco.hpp"
-#include "Opcode.hpp"
 #include "Instruction.hpp"
 #include "Registers.hpp"
 #include "ULA.hpp"
 #include "RAM.hpp"
 #include "InstructionDecode.hpp"
-#include <string>
 
 class Pipeline
 {
@@ -23,8 +21,5 @@ public:
     void MemoryAccess(const DecodedInstruction& decoded, int resultado, Registers& regs, int& Clock);
     void Execute(const DecodedInstruction& decoded, Registers& regs, RAM& ram, int& PC, Disco& Disco, int& Clock);
 };
-
-
-
 
 #endif

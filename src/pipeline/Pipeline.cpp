@@ -1,9 +1,6 @@
 #include "../includes/Pipeline.hpp"
-#include <fstream>
-#include <sstream>
 #include <string>
 #include <algorithm>
-#include <cctype>
 #include <iostream>
 
 using namespace std;

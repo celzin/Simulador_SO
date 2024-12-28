@@ -5,7 +5,6 @@
 #include "includes/Core.hpp"
 
 #include <vector>
-#include <memory>
 
 int main() {
     RAM ram;

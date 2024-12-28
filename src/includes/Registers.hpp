@@ -4,7 +4,6 @@
 
 #include <iostream>
 #include <vector>
-#include <utility> // Para std::pair
 
 using namespace std;
 

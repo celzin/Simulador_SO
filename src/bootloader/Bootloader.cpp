@@ -10,11 +10,10 @@
 #include <vector>
 #include <iostream>
 #include <thread>
-#include <chrono>
 
 using namespace std;
 
-#define NUM_CORES 2
+#define NUM_CORES 1
 
 void Bootloader::inicializarSistema(Registers& regs, RAM& ram, Disco& disco, vector<Core*>& cores){
     disco.setRegistersFromFile(regs, "data/setRegisters.txt");

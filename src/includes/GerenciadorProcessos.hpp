@@ -2,7 +2,6 @@
 #define GERENCIADOR_PROCESSOS_HPP
 
 #include <queue>
-#include <vector>
 #include <iostream>
 #include "PCB.hpp"
 
