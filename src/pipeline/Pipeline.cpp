@@ -28,7 +28,7 @@ void Pipeline::PipelineProcess(Registers& regs, RAM& ram, int& PC, Disco& disco,
         PC += 4;
 
         // cout << endl << "REGS:" << endl;
-        regs.display(); 
+        // regs.display(); 
 
         cout << "Clock: " << Clock << endl << endl;
     }

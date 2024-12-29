@@ -17,19 +17,19 @@ void PCB::displayPCB() const {
     std::cout << "PC: " << PC << std::endl;
     std::cout << "Quantum Restante: " << quantum << std::endl;
 
-    std::cout << "Registradores:" << std::endl;
-    for (size_t i = 0; i < registradores.size(); ++i) {
-        std::cout << "R[" << i << "] = " << registradores[i] << std::endl;
-    }
+    // std::cout << "Registradores:" << std::endl;
+    // for (size_t i = 0; i < registradores.size(); ++i) {
+    //     std::cout << "R[" << i << "] = " << registradores[i] << std::endl;
+    // }
 
     //std::cout << "Instruções Carregadas (limite: 5 primeiras):" << std::endl;
     //for (size_t i = 0; i < std::min(instrucoes.size(), static_cast<size_t>(5)); ++i) {
-    for (size_t i = 0; i < instrucoes.size(); ++i) {
-        std::cout << std::endl
-                  << "[" << i << "] Opcode: " << instrucoes[i].op
-                  << ", Destino: R[" << instrucoes[i].Destiny_Register
-                  << "], R1=(" << instrucoes[i].Register_1
-                  << "), R2=(" << instrucoes[i].Register_2 << ")" << std::endl;
-    }
-    std::cout << "=================================================" << std::endl;
+    // for (size_t i = 0; i < instrucoes.size(); ++i) {
+    //     std::cout << std::endl
+    //                "[" << i << "] Opcode: " << instrucoes[i].op
+    //               << ", Destino: R[" << instrucoes[i].Destiny_Register
+    //               << "], R1=(" << instrucoes[i].Register_1
+    //               << "), R2=(" << instrucoes[i].Register_2 << ")" << std::endl;
+    // }
+    // std::cout << "=================================================" << std::endl;
 }
