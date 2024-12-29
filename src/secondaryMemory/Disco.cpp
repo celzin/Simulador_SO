@@ -52,26 +52,36 @@ void Disco::setRegistersFromFile(Registers& regs, const string& regsFilename) {
     regsFile.close();
 }
 
-int Disco::loadInstructionsFromFile(RAM& ram, const string& instrFilename, int baseAddress) {
-    ifstream file(instrFilename);
+int Disco::loadInstructionsFromFile(RAM& ram, const std::string& instrFilename, int baseAddress) {
+    std::ifstream file(instrFilename);
     if (!file.is_open()) {
-        cerr << "Erro ao abrir o arquivo de instruções: " << instrFilename << endl;
+        std::cerr << "Erro ao abrir o arquivo de instruções: " << instrFilename << std::endl;
         return -1;
     }
 
-    string line;
-    int instructionAddress = baseAddress; // Inicia no endereço base fornecido
-    int count = 0; // Conta o número de instruções lidas
+    std::string line;
+    int instructionAddress = baseAddress; // Endereço base na RAM
+    int quantumProcesso = 0;              // Quantum do processo
+    int count = 0;                        // Número de instruções
 
-    while (getline(file, line)) {
-        string opcodeStr;
+    // Ler quantum do processo na primeira linha
+    if (std::getline(file, line)) {
+        try {
+            quantumProcesso = std::stoi(line); // Converter para inteiro
+        } catch (...) {
+            std::cerr << "Erro: Quantum inválido no arquivo " << instrFilename << std::endl;
+            return -1;
+        }
+    }
+
+    // Ler as instruções restantes
+    while (std::getline(file, line)) {
+        std::string opcodeStr;
         int reg1, reg2, reg3;
         char virgula;
 
-        stringstream ss(line);
-        getline(ss, opcodeStr, ',');
-
-        opcodeStr.erase(remove_if(opcodeStr.begin(), opcodeStr.end(), ::isspace), opcodeStr.end());
+        std::stringstream ss(line);
+        std::getline(ss, opcodeStr, ',');
         ss >> reg1 >> virgula >> reg2 >> virgula >> reg3;
 
         Opcode opcode;
@@ -84,23 +94,22 @@ int Disco::loadInstructionsFromFile(RAM& ram, const string& instrFilename, int b
         else if (opcodeStr == "ENQ") opcode = ENQ;
         else if (opcodeStr == "IF_igual") opcode = IF_igual;
         else {
-            cerr << "Erro: Instrução inválida no arquivo: " << opcodeStr << endl;
+            std::cerr << "Erro: Instrução inválida no arquivo " << opcodeStr << std::endl;
             continue;
         }
 
-        // Cria a instrução e grava na RAM
         Instruction instr(opcode, reg1, reg2, reg3);
         if (instructionAddress < ram.tamanho) {
             ram.writeInstruction(instructionAddress++, instr);
             count++;
         } else {
-            cerr << "Erro: memória RAM cheia, não é possível carregar mais instruções." << endl;
+            std::cerr << "Erro: Memória RAM cheia, não é possível carregar mais instruções." << std::endl;
             break;
         }
     }
     file.close();
 
-    return count; // Retorna o número de instruções lidas
+    return quantumProcesso; // Retorna o quantum do processo
 }
 
 
