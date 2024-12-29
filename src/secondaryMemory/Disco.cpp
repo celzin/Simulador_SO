@@ -1,7 +1,4 @@
 #include "../includes/Disco.hpp"
-#include <fstream>
-#include <sstream>
-#include <algorithm>
 
 Disco::Disco() : memoria(LINHAS, std::vector<std::pair<int, bool>>(COLUNAS, {0, false})) {}
 
@@ -55,7 +52,7 @@ void Disco::setRegistersFromFile(Registers& regs, const string& regsFilename) {
     regsFile.close();
 }
 
-int Disco::loadInstructionsFromFile(RAM& ram, const string& instrFilename) {
+int Disco::loadInstructionsFromFile(RAM& ram, const string& instrFilename, int baseAddress) {
     ifstream file(instrFilename);
     if (!file.is_open()) {
         cerr << "Erro ao abrir o arquivo de instruções: " << instrFilename << endl;
@@ -63,7 +60,8 @@ int Disco::loadInstructionsFromFile(RAM& ram, const string& instrFilename) {
     }
 
     string line;
-    int instructionAddress = 0;
+    int instructionAddress = baseAddress; // Inicia no endereço base fornecido
+    int count = 0; // Conta o número de instruções lidas
 
     while (getline(file, line)) {
         string opcodeStr;
@@ -71,11 +69,9 @@ int Disco::loadInstructionsFromFile(RAM& ram, const string& instrFilename) {
         char virgula;
 
         stringstream ss(line);
-
         getline(ss, opcodeStr, ',');
 
         opcodeStr.erase(remove_if(opcodeStr.begin(), opcodeStr.end(), ::isspace), opcodeStr.end());
-
         ss >> reg1 >> virgula >> reg2 >> virgula >> reg3;
 
         Opcode opcode;
@@ -92,10 +88,11 @@ int Disco::loadInstructionsFromFile(RAM& ram, const string& instrFilename) {
             continue;
         }
 
+        // Cria a instrução e grava na RAM
         Instruction instr(opcode, reg1, reg2, reg3);
-
         if (instructionAddress < ram.tamanho) {
-            ram.instruction_memory[instructionAddress++] = instr;
+            ram.writeInstruction(instructionAddress++, instr);
+            count++;
         } else {
             cerr << "Erro: memória RAM cheia, não é possível carregar mais instruções." << endl;
             break;
@@ -103,5 +100,38 @@ int Disco::loadInstructionsFromFile(RAM& ram, const string& instrFilename) {
     }
     file.close();
 
-    return instructionAddress;
+    return count; // Retorna o número de instruções lidas
+}
+
+
+vector<string> Disco::listInstructionsFiles(const string& listDir, const string& extension){
+    vector<string> files;
+    try {
+        for(const auto& entry : filesystem::directory_iterator(listDir)){
+            if(entry.is_regular_file() && entry.path().extension() == extension){
+                files.push_back(entry.path().string());
+            }
+        }
+    } catch (const filesystem::filesystem_error& e) {
+        cerr << "Erro ao acessar lista de arquivos no diretório: " << listDir << endl;
+    }
+    return files;
+}
+
+vector<pair<string,int>> Disco::loadProcessFromFiles(RAM& ram, const string& diretorio){
+    vector<pair<string, int>> processos;
+    vector<string> files = listInstructionsFiles(diretorio, ".txt");
+
+    int baseAddress = 0;
+
+    for(const auto& file : files){
+        int instructionCount = loadInstructionsFromFile(ram, file, baseAddress);
+        if(instructionCount > 0){
+            processos.emplace_back(file, instructionCount);
+            baseAddress += instructionCount;
+        } else {
+            cerr << "Erro ao carregar instruções do arquivo: " << file << endl;
+        }
+    }
+    return processos;
 }

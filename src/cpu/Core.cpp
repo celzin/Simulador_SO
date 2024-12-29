@@ -1,7 +1,7 @@
 #include "../includes/Core.hpp"
 
-Core::Core(int id, Registers& regs, RAM& ram, Disco& disco, int& instructionAddress) 
-    : id(id), regs(regs), ram(ram), disco(disco), PC(0), Clock(0), instructionAddress(instructionAddress), processoAtual(nullptr) {
+Core::Core(int id, Registers& regs, RAM& ram, Disco& disco, vector<pair<string,int>>& processosCarregados) 
+    : id(id), regs(regs), ram(ram), disco(disco), PC(0), Clock(0), processosCarregados(processosCarregados), processoAtual(nullptr) {
         std::cout << std::endl << "Core " << id << " inicializado com RAM e Disco\n";
 }
 
@@ -33,8 +33,10 @@ void Core::executarProcesso() {
     // Execução do processo
     while (processoAtual->quantum > 0 && PC < processoAtual->instrucoes.size() * 4) {
         Instruction instr = processoAtual->instrucoes[PC / 4];
+        std::cout << "[Core " << id << "] Executando instrução no PC=" << PC
+              << ": Opcode=" << instr.op << std::endl;
         DecodedInstruction decoded = InstructionDecode(instr, regs);
-        uc.executarInstrucao(regs, ram, PC, disco, Clock, instructionAddress);
+        uc.executarInstrucao(regs, ram, PC, disco, Clock, processosCarregados.size());
 
         processoAtual->quantum--;
         PC += 4;

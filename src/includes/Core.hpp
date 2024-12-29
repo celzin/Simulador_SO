@@ -18,10 +18,10 @@ public:
     RAM& ram;
     Disco& disco;
     int Clock;
-    int& instructionAddress; 
+    vector<pair<string,int>>& processosCarregados; 
     PCB* processoAtual; // PCB do processo em execução
 
-    Core(int id, Registers& regs, RAM& ram, Disco& disco, int& instructionAddress);
+    Core(int id, Registers& regs, RAM& ram, Disco& disco, vector<pair<string,int>>& processosCarregados);
     void executarProcesso(); // Executa o processo atual
     void setProcesso(PCB* processo); // Configura o processo a ser executado
 };

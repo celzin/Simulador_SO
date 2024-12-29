@@ -18,41 +18,36 @@ using namespace std;
 void Bootloader::inicializarSistema(Registers& regs, RAM& ram, Disco& disco, vector<Core*>& cores){
     disco.setRegistersFromFile(regs, "data/setRegisters.txt");
 
-    int instructionAddress = disco.loadInstructionsFromFile(ram, "data/instr/instructions1.txt");
-    if (instructionAddress == -1) {
-        cerr << "Erro ao carregar as instruções. Sistema será encerrado." << endl;
-        return;
-    }
+    vector<pair<string,int>> processosCarregados = disco.loadProcessFromFiles(ram, "data/instr");
     
-    // Criando múltiplos núcleos
-    for (int i = 0; i < NUM_CORES; i++) {
-        cores.push_back(new Core(i, regs, ram, disco, instructionAddress)); // ID do núcleo
-    }
-
     // Gerenciador de processos
     GerenciadorProcessos gerenciador;
+    vector<unique_ptr<PCB>> processos;
 
-    // Obter todas as intruções da RAM
+    const int blocoPorProcesso = 10;
+
+    for (size_t i = 0; i < processosCarregados.size(); ++i) {
+    const auto& [file, instructionCount] = processosCarregados[i];
+
+    // Calcula o endereço base para o arquivo atual
+    int startAddress = (i == 0) ? 0 : processosCarregados[i - 1].second;
+
     vector<Instruction> allInstructions;
-    for(int i = 0; i < instructionAddress; i++){
-        allInstructions.push_back(ram.fetchInstruction(i));
+    for (int j = 0; j < instructionCount; ++j) {
+        allInstructions.push_back(ram.fetchInstruction(startAddress + j));
     }
 
-    // Criando um processo para cada instrução
-    vector<unique_ptr<PCB>> processos;
-    for(size_t i = 0; i < allInstructions.size(); ++i){
-        vector<Instruction> singleInstruction = {allInstructions[i]}; // Apenas uma instrução
-        processos.emplace_back(make_unique<PCB>(i+1, singleInstruction, 5, regs)); // ID: i+1, Quantum 5
- 
-        // Adicionando processos ao gerenciador
-        gerenciador.adicionarProcesso(processos.back().get());
-        //cout << "[DEBUG] Processo " << (i+1) << " criando com Quantum: 5 e Instrução: " << singleInstruction[0] << endl;
+    // Cria o processo com as instruções lidas
+    processos.emplace_back(make_unique<PCB>(i + 1, allInstructions, 50, regs));
+    gerenciador.adicionarProcesso(processos.back().get());
 
-        // cout << "[DEBUG] Processo " << (i+1) << " criado com registradores: ";
-        // for(int reg : regs.getAll()){
-        //     cout << reg << " ";
-        // }
-        // cout << endl;
+    // cout << "[DEBUG] Processo criado para o arquivo " << file << " com " << instructionCount << " instruções no endereço base " << startAddress << "." << endl;
+}
+
+
+    // Criando múltiplos núcleos
+    for (int i = 0; i < NUM_CORES; i++) {
+        cores.push_back(new Core(i, regs, ram, disco, processosCarregados)); // ID do núcleo
     }
 
     // Iniciar gerenciador de threads
