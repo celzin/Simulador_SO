@@ -36,7 +36,7 @@ void Core::executarProcesso() {
         std::cout << "[Core " << id << "] Executando instrução no PC=" << PC
               << ": Opcode=" << instr.op << std::endl;
         DecodedInstruction decoded = InstructionDecode(instr, regs);
-        uc.executarInstrucao(regs, ram, PC, disco, Clock, processosCarregados.size());
+        uc.executarInstrucao(regs, ram, PC, disco, Clock, processoAtual->instrucoes.size());
 
         processoAtual->quantum--;
         PC += 4;

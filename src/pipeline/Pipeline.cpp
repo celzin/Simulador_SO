@@ -8,8 +8,9 @@ using namespace std;
 Pipeline::Pipeline() {}
 
 void Pipeline::PipelineProcess(Registers& regs, RAM& ram, int& PC, Disco& disco, int& Clock, int& instructionAddress) {
-    
-    while (PC < instructionAddress * 4) {
+    cout << "[DEBUG] Iniciando PipelineProcess com " << instructionAddress << " instruções." << endl;
+    while (PC / 4 < instructionAddress) {
+        cout << "[DEBUG] Processando instrução no PC=" << PC << endl;
         Instruction instr = InstructionFetch(ram, PC / 4);
         Clock++;
 

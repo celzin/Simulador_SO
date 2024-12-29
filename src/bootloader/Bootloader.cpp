@@ -13,7 +13,7 @@
 
 using namespace std;
 
-#define NUM_CORES 1
+#define NUM_CORES 2
 
 void Bootloader::inicializarSistema(Registers& regs, RAM& ram, Disco& disco, vector<Core*>& cores){
     disco.setRegistersFromFile(regs, "data/setRegisters.txt");
