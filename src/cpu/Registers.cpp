@@ -20,7 +20,11 @@ int Registers::get(int index) const {
 
 void Registers::set(int index, int value) {
     if (index >= 0 && index < registradores.size()) {
-        registradores[index] = {value, true}; 
+        if (registradores[index].first != value) {
+            registradores[index] = {value, true};
+        } else {
+            registradores[index].second = false;
+        }
     } else {
         cerr << "Erro: Registrador inválido " << index << endl;
     }
