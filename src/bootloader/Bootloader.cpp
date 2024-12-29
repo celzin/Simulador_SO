@@ -27,23 +27,23 @@ void Bootloader::inicializarSistema(Registers& regs, RAM& ram, Disco& disco, vec
     const int blocoPorProcesso = 10;
 
     for (size_t i = 0; i < processosCarregados.size(); ++i) {
-    const auto& [file, instructionCount] = processosCarregados[i];
 
-    // Calcula o endereço base para o arquivo atual
-    int startAddress = (i == 0) ? 0 : processosCarregados[i - 1].second;
+        const auto& [file, instructionCount] = processosCarregados[i];
 
-    vector<Instruction> allInstructions;
-    for (int j = 0; j < instructionCount; ++j) {
-        allInstructions.push_back(ram.fetchInstruction(startAddress + j));
+        // Calcula o endereço base para o arquivo atual
+        int startAddress = (i == 0) ? 0 : processosCarregados[i - 1].second;
+
+        vector<Instruction> allInstructions;
+        for (int j = 0; j < instructionCount; ++j) {
+            allInstructions.push_back(ram.fetchInstruction(startAddress + j));
+        }
+
+        // Cria o processo com as instruções lidas
+        processos.emplace_back(make_unique<PCB>(i + 1, allInstructions, 50, regs));
+        gerenciador.adicionarProcesso(processos.back().get());
+
+        // cout << "[DEBUG] Processo criado para o arquivo " << file << " com " << instructionCount << " instruções no endereço base " << startAddress << "." << endl;
     }
-
-    // Cria o processo com as instruções lidas
-    processos.emplace_back(make_unique<PCB>(i + 1, allInstructions, 50, regs));
-    gerenciador.adicionarProcesso(processos.back().get());
-
-    // cout << "[DEBUG] Processo criado para o arquivo " << file << " com " << instructionCount << " instruções no endereço base " << startAddress << "." << endl;
-}
-
 
     // Criando múltiplos núcleos
     for (int i = 0; i < NUM_CORES; i++) {
