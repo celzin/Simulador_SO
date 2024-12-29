@@ -18,10 +18,11 @@ public:
     RAM& ram;
     Disco& disco;
     int Clock;
-    vector<pair<string,int>>& processosCarregados; 
+    int quantumNucleo; // Quantum máximo para este núcleo
+    std::vector<std::pair<std::string, int>>& processosCarregados;
     PCB* processoAtual; // PCB do processo em execução
 
-    Core(int id, Registers& regs, RAM& ram, Disco& disco, vector<pair<string,int>>& processosCarregados);
+    Core(int id, Registers& regs, RAM& ram, Disco& disco, std::vector<std::pair<std::string, int>>& processosCarregados, int quantumNucleo);
     void executarProcesso(); // Executa o processo atual
     void setProcesso(PCB* processo); // Configura o processo a ser executado
 };
