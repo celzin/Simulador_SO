@@ -26,7 +26,4 @@ public:
     void Execute(const DecodedInstruction& decoded, Registers& regs, RAM& ram, int& PC, Disco& Disco, int& Clock);
 };
 
-
-
-
 #endif
