@@ -18,37 +18,37 @@ int main() {
     RAM ram;
     Disco disco;
     Perifericos periferico;
+    Escalonador escalonador;
 
     // periferico.estadoPeriferico("teclado", true);
     // periferico.estadoPeriferico("mouse", true);
     
-     // Criando 2 processos (PCBs) com quantum de 5 ciclos
-    vector<PCB*> pcbs;
+    // Criando 2 processos (PCBs) com quantum de 5 ciclos
+    std::vector<PCB*> pcbs;
     pcbs.push_back(new PCB(1, 5));  // Processo 1 com quantum 5
     pcbs.push_back(new PCB(2, 5));  // Processo 2 com quantum 5
 
-    // Criando o escalonador
-    Escalonador escalonador;
-
-    // Adicionando os processos à fila de processos
+    // Adicionando os processos ao escalonador
     for (auto& pcb : pcbs) {
         escalonador.adicionarProcesso(pcb);
     }
 
-    // Inicializando os núcleos com o escalonador
-    vector<Core> cores;
-    cores.emplace_back(ram, disco, escalonador);  // Passando o escalonador para o núcleo
-    cores.emplace_back(ram, disco, escalonador);  // Outro núcleo
+    // Criando múltiplos núcleos
+    const int NUM_NUCLEOS = 2;  // Definindo o número de núcleos
+    std::vector<Core> cores;
+    for (int i = 0; i < NUM_NUCLEOS; ++i) {
+        cores.push_back(Core(ram, disco, escalonador));  // Criando núcleos
+    }
 
-    // Rodando os núcleos em threads
-    vector<thread> threads;
+    // Executando os núcleos em threads
+    std::vector<std::thread> threads;
     for (auto& core : cores) {
-        threads.push_back(thread(&Core::run, &core));  // Rodando cada núcleo em uma thread
+        threads.push_back(std::thread(&Core::run, &core));  // Rodando cada núcleo em uma thread
     }
 
     // Aguardando que todas as threads terminem
     for (auto& th : threads) {
-        th.join();
+        th.join();  // Espera todas as threads terminarem
     }
     
     // cout << "\nDados RAM\n";
