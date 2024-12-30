@@ -12,6 +12,9 @@
 #include "Disco.hpp"
 #include "Pipeline.hpp"
 
+#include <thread>
+#include <vector>
+
 class Core {
 public:
     Registers regs;
@@ -23,6 +26,7 @@ public:
 
     Core(RAM& ram, Disco& disco);
     void activate();
+    void run();  // Nova função para cada núcleo
 };
 
 #endif

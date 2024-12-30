@@ -15,33 +15,44 @@
 using namespace std;
 
 int main() {
-
     RAM ram;
     Disco disco;
-    vector<Core> cores;
     Perifericos periferico;
 
     periferico.estadoPeriferico("teclado", true);
     periferico.estadoPeriferico("mouse", true);
+    
+    // Criar múltiplos núcleos (cores)
+    vector<Core> cores;
+    int numCores = 2;  // Pode ajustar esse número para mais núcleos
 
-    for (int i = 0; i < 2; i++)
-    {   cout << "CORE " << i << ": " << endl;
+    // Inicializa os núcleos
+    for (int i = 0; i < numCores; i++) {
+        cout << "Inicializando Core " << i << endl;
         cores.emplace_back(ram, disco);
-        cout << endl << endl << endl;
     }
 
-    cout << "Utilizando o Core 0:" << endl;
-    cores[0].activate();
+    // Ativa os núcleos em paralelo usando threads
+    vector<thread> threads;
+    for (int i = 0; i < numCores; i++) {
+        threads.push_back(thread(&Core::run, &cores[i]));
+    }
 
-    cout << "\nDados RAM\n";
-    ram.display();
+    // Espera todos os núcleos terminarem sua execução
+    for (auto& th : threads) {
+        th.join();
+    }
 
-    cout << "\nDados DISCO\n";
-    disco.display();
+    cout << "Execução MAIN finalizada!\n";
 
-    cout << "\nEstado atual da RAM:\n";
-    ram.displayI();
+    // cout << "\nDados RAM\n";
+    // ram.display();
+
+    // cout << "\nDados DISCO\n";
+    // disco.display();
+
+    // cout << "\nEstado atual da RAM:\n";
+    // ram.displayI();
     
-
     return 0;
 }
