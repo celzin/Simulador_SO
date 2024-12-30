@@ -12,23 +12,24 @@
 #include "Disco.hpp"
 #include "Pipeline.hpp"
 #include "PCB.hpp"
+#include "Escalonador.hpp"
 
 #include <thread>
 #include <vector>
 
 class Core {
 public:
-    Registers regs;               
-    UnidadeControle uc;          
-    int PC;                       
-    RAM& ram;                      
-    Disco& disco;                  
-    int Clock;                     
-    std::vector<PCB>& processos;  
+    Registers regs;                
+    UnidadeControle uc;           
+    int PC;                         
+    RAM& ram;               
+    Disco& disco;        
+    int Clock;                
+    Escalonador& escalonador;      
 
-    Core(RAM& ram, Disco& disco, std::vector<PCB>& pcbs); 
+    Core(RAM& ram, Disco& disco, Escalonador& escalonador);  // Construtor com escalonador
     void activate();  
-    void run();       
+    void run();   
 };
 
 #endif

@@ -25,5 +25,5 @@ void PCB::decrementarQuantum() {
 }
 
 bool PCB::quantumExpirado() const {
-    return quantumRestante == 0;
+    return quantumRestante <= 0;
 }
