@@ -18,6 +18,10 @@ public:
     int get(int index) const;
     void set(int index, int value);
     void display() const;
+
+    void reset(); // Reinicializa todos os registradores
+    const vector<pair<int, bool>>& getAllRegisters() const;
+    void setAllRegisters(const vector<pair<int, bool>>& newRegisters);
 };
 
 #endif

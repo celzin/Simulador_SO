@@ -18,10 +18,30 @@ void Registers::set(int index, int value) {
     }
 }
 
-
 void Registers::display() const {
     cout << endl << "Registradores: " << endl;
     for (size_t i = 0; i < registradores.size(); ++i) {
         cout << "R[" << i << "] = " << registradores[i].first << ", Flag = " << (registradores[i].second ? "sujo" : "limpo") << endl;
+    }
+}
+
+// Método para resetar os registradores
+void Registers::reset() {
+    for (size_t i = 0; i < registradores.size(); ++i) {
+        registradores[i].first = 0;    // Resetando o valor dos registradores para 0
+        registradores[i].second = false; // Resetando a flag de "sujo" para "limpo"
+    }
+}
+
+// Métodos para manipular todos os registradores
+const vector<pair<int, bool>>& Registers::getAllRegisters() const {
+    return registradores;
+}
+
+void Registers::setAllRegisters(const vector<pair<int, bool>>& newRegisters) {
+    if (newRegisters.size() == registradores.size()) {
+        registradores = newRegisters;
+    } else {
+        cerr << "Erro: O número de registradores não corresponde." << endl;
     }
 }

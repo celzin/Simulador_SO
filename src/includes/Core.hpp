@@ -11,22 +11,24 @@
 #include "Pipeline.hpp"
 #include "Disco.hpp"
 #include "Pipeline.hpp"
+#include "PCB.hpp"
 
 #include <thread>
 #include <vector>
 
 class Core {
 public:
-    Registers regs;
-    UnidadeControle uc;
-    int PC;
-    RAM& ram;
-    Disco& disco;
-    int Clock;
+    Registers regs;               
+    UnidadeControle uc;          
+    int PC;                       
+    RAM& ram;                      
+    Disco& disco;                  
+    int Clock;                     
+    std::vector<PCB>& processos;  
 
-    Core(RAM& ram, Disco& disco);
-    void activate();
-    void run();  // Nova função para cada núcleo
+    Core(RAM& ram, Disco& disco, std::vector<PCB>& pcbs); 
+    void activate();  
+    void run();       
 };
 
 #endif

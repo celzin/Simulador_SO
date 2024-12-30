@@ -9,6 +9,7 @@
 #include "InstructionDecode.hpp"
 #include "Disco.hpp"
 #include "Pipeline.hpp"
+#include "PCB.hpp"
 
 using namespace std;
 
@@ -17,7 +18,7 @@ private:
     Pipeline pipeline;
 
 public:
-    void executarInstrucao(Registers& regs, RAM& ram, int& PC, Disco& disco, int& Clock);
+    void executarInstrucao(Registers& regs, RAM& ram, int& PC, Disco& disco, int& Clock, PCB& pcb);
 };
 
 #endif

@@ -22,28 +22,21 @@ int main() {
     periferico.estadoPeriferico("teclado", true);
     periferico.estadoPeriferico("mouse", true);
     
-    // Criar múltiplos núcleos (cores)
+    // Criando 2 processos (PCBs) com quantum de 5 ciclos
+    vector<PCB> pcbs;
+    pcbs.push_back(PCB(1, 5));  // Processo 1 com quantum 5
+    pcbs.push_back(PCB(2, 5));  // Processo 2 com quantum 5
+
+    // Inicializando cores com os PCBs
     vector<Core> cores;
-    int numCores = 2;  // Pode ajustar esse número para mais núcleos
+    cores.emplace_back(ram, disco, pcbs);  // Passando a lista de PCBs para o núcleo
 
-    // Inicializa os núcleos
-    for (int i = 0; i < numCores; i++) {
-        cout << "Inicializando Core " << i << endl;
-        cores.emplace_back(ram, disco);
+    // Rodando os núcleos
+    for (auto& core : cores) {
+        core.activate();  // Executa o processo associado ao núcleo
     }
 
-    // Ativa os núcleos em paralelo usando threads
-    vector<thread> threads;
-    for (int i = 0; i < numCores; i++) {
-        threads.push_back(thread(&Core::run, &cores[i]));
-    }
-
-    // Espera todos os núcleos terminarem sua execução
-    for (auto& th : threads) {
-        th.join();
-    }
-
-    cout << "Execução MAIN finalizada!\n";
+    return 0;
 
     // cout << "\nDados RAM\n";
     // ram.display();
@@ -54,5 +47,4 @@ int main() {
     // cout << "\nEstado atual da RAM:\n";
     // ram.displayI();
     
-    return 0;
 }
