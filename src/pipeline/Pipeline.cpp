@@ -38,8 +38,8 @@ void Pipeline::PipelineProcess(Registers& regs, RAM& ram, int& PC, const string&
         
         PC += 4;
 
-        cout << "REGS:" << endl;
-        regs.display(); 
+        // cout << "REGS:" << endl;
+        // regs.display(); 
 
         cout << "Clock: " << Clock << endl;
     }
