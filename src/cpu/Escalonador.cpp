@@ -3,6 +3,7 @@
 Escalonador::Escalonador() {}
 
 PCB* Escalonador::obterProximoProcesso() {
+    std::lock_guard<std::mutex> lock(mtx);
     if (!filaVazia()) {
         PCB* processo = filaProcessos.front();
         filaProcessos.pop();
@@ -14,6 +15,7 @@ PCB* Escalonador::obterProximoProcesso() {
 }
 
 void Escalonador::adicionarProcesso(PCB* processo) {
+    std::lock_guard<std::mutex> lock(mtx);
     filaProcessos.push(processo);  // Adiciona o processo à fila de prontos
 }
 

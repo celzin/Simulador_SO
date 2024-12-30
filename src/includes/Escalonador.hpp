@@ -4,10 +4,12 @@
 #include "PCB.hpp"
 #include <queue>
 #include <vector>
+#include <mutex>
 
 class Escalonador {
 private:
     std::queue<PCB*> filaProcessos;  // Fila de processos prontos
+    std::mutex mtx;
 
 public:
     Escalonador();  // Construtor que inicializa a fila
