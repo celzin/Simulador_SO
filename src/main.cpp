@@ -22,29 +22,17 @@ int main() {
     // periferico.estadoPeriferico("teclado", true);
     // periferico.estadoPeriferico("mouse", true);
     
-    // Criando 2 processos (PCBs) com quantum de 5 ciclos
-    // Criando 2 processos (PCBs) com quantum de 5 ciclos
+     // Criando 2 processos (PCBs) com quantum de 5 ciclos
     vector<PCB*> pcbs;
     pcbs.push_back(new PCB(1, 5));  // Processo 1 com quantum 5
-    if (pcbs.back() == nullptr) {
-        std::cerr << "Erro ao alocar memória para o processo 1\n";
-    }
-
     pcbs.push_back(new PCB(2, 5));  // Processo 2 com quantum 5
-    if (pcbs.back() == nullptr) {
-        std::cerr << "Erro ao alocar memória para o processo 2\n";
-    }
 
     // Criando o escalonador
     Escalonador escalonador;
 
     // Adicionando os processos à fila de processos
     for (auto& pcb : pcbs) {
-        if (pcb != nullptr) {
-            escalonador.adicionarProcesso(pcb);
-        } else {
-            std::cerr << "Erro: PCB nulo ao tentar adicionar à fila.\n";
-        }
+        escalonador.adicionarProcesso(pcb);
     }
 
     // Inicializando os núcleos com o escalonador
@@ -62,12 +50,7 @@ int main() {
     for (auto& th : threads) {
         th.join();
     }
-
-    // Liberar memória dos processos (PCBs)
-    for (auto& pcb : pcbs) {
-        delete pcb;
-    }
-
+    
     // cout << "\nDados RAM\n";
     // ram.display();
 

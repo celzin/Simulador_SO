@@ -3,13 +3,14 @@
 
 #include <iostream>
 #include <vector>
+#include <mutex> 
 
 class Disco {
 private:
     static const int LINHAS = 10;
     static const int COLUNAS = 10;
-    
     std::vector<std::vector<std::pair<int, bool>>> memoria;
+    std::mutex mtx;  
 
 public:
     Disco(); 

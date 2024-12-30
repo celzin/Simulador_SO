@@ -5,13 +5,15 @@
 #include <vector>
 #include "Instruction.hpp"
 #include "InstructionDecode.hpp"
+#include <mutex>  
 
 class RAM {
 private:
+    std::mutex mtx;  
 
 public:
-    vector<int> memoria;
-    vector<Instruction> instruction_memory;
+    std::vector<int> memoria;
+    std::vector<Instruction> instruction_memory;
     static const int tamanho = 32;
 
     RAM();

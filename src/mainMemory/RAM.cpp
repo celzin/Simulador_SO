@@ -3,6 +3,7 @@
 RAM::RAM() : memoria(tamanho, 0), instruction_memory(tamanho) {}
 
 void RAM::write(int endereco, int valor) {
+    std::lock_guard<std::mutex> lock(mtx);  // Bloqueia o mutex enquanto a função é executada
     if (endereco >= 0 && endereco < tamanho) {
         memoria[endereco] = valor;
     } else {
@@ -11,6 +12,7 @@ void RAM::write(int endereco, int valor) {
 }
 
 int RAM::read(int endereco) {
+    std::lock_guard<std::mutex> lock(mtx);  // Bloqueia o mutex enquanto a função é executada
     if (endereco >= 0 && endereco < tamanho) {
         return memoria[endereco];
     } else {
@@ -20,6 +22,7 @@ int RAM::read(int endereco) {
 }
 
 void RAM::writeInstruction(int endereco, const Instruction& instr) {
+    std::lock_guard<std::mutex> lock(mtx);  // Bloqueia o mutex enquanto a função é executada
     if (endereco >= 0 && endereco < tamanho) {
         instruction_memory[endereco] = instr;
     } else {
