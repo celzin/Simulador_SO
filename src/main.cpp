@@ -19,24 +19,29 @@ int main() {
     Disco disco;
     Perifericos periferico;
 
-    periferico.estadoPeriferico("teclado", true);
-    periferico.estadoPeriferico("mouse", true);
+    // periferico.estadoPeriferico("teclado", true);
+    // periferico.estadoPeriferico("mouse", true);
     
     // Criando 2 processos (PCBs) com quantum de 5 ciclos
     vector<PCB> pcbs;
     pcbs.push_back(PCB(1, 5));  // Processo 1 com quantum 5
     pcbs.push_back(PCB(2, 5));  // Processo 2 com quantum 5
 
-    // Inicializando cores com os PCBs
+    // Inicializando os núcleos com os PCBs
     vector<Core> cores;
     cores.emplace_back(ram, disco, pcbs);  // Passando a lista de PCBs para o núcleo
+    cores.emplace_back(ram, disco, pcbs);  // Outro núcleo
 
-    // Rodando os núcleos
+    // Rodando os núcleos em threads
+    vector<thread> threads;
     for (auto& core : cores) {
-        core.activate();  // Executa o processo associado ao núcleo
+        threads.push_back(thread(&Core::run, &core));  // Rodando cada núcleo em uma thread
     }
 
-    return 0;
+    // Aguardando que todas as threads terminem
+    for (auto& th : threads) {
+        th.join();
+    }
 
     // cout << "\nDados RAM\n";
     // ram.display();
@@ -47,4 +52,5 @@ int main() {
     // cout << "\nEstado atual da RAM:\n";
     // ram.displayI();
     
+    return 0;
 }
