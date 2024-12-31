@@ -8,14 +8,16 @@
 using namespace std;
 
 class Perifericos {
-    private:
-        unordered_map<string, bool> perifericos = {
-            {"teclado", false},
-            {"mouse", false}
-        };
-    public:
-        void estadoPeriferico(const string& nomePeriferico, bool estado);
-        void eventoPeriferico(const string& nomePeriferico);
+private:
+    std::unordered_map<std::string, bool> perifericos; 
+
+public:
+    Perifericos();
+
+    void estadoPeriferico(const std::string& nomeRecurso, bool estado); 
+    bool verificarPeriferico(const std::string& nomeRecurso) const;     
+
+    void exibirPerifericos() const; 
 };
 
 #endif

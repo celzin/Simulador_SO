@@ -35,7 +35,7 @@ public:
     void run();   
 
 private:
-    void gerenciarBloqueios(PCB* processo);
+    void gerenciarRecursos(PCB* processo);  
 };
 
 #endif

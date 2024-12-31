@@ -1,18 +1,27 @@
 #include "../includes/Perifericos.hpp"
 
-void Perifericos::estadoPeriferico(const string& nomePeriferico, bool estado) {
-    if (perifericos.find(nomePeriferico) != perifericos.end()) {
-        perifericos[nomePeriferico] = estado;
-        cout << "O periférico " << nomePeriferico << " foi " << (estado ? "conectado" : "desconectado") << "." << endl;
+Perifericos::Perifericos() {
+    perifericos["teclado"] = false;
+    perifericos["mouse"] = false;
+    perifericos["impressora"] = false;
+}
+
+void Perifericos::estadoPeriferico(const std::string& nomeRecurso, bool estado) {
+    if (perifericos.find(nomeRecurso) != perifericos.end()) {
+        perifericos[nomeRecurso] = estado;
+        std::cout << "Periférico " << nomeRecurso << (estado ? " alocado." : " liberado.") << std::endl;
     } else {
-        cout << "Periférico " << nomePeriferico << " não encontrado." << endl;
+        std::cerr << "Erro: Periférico " << nomeRecurso << " não encontrado!" << std::endl;
     }
 }
 
-void Perifericos::eventoPeriferico(const string& nomePeriferico) {
-    if (perifericos.find(nomePeriferico) != perifericos.end() && perifericos[nomePeriferico]) {
-        cout << "Sinal enviado: O periférico " << nomePeriferico << " foi utilizado." << endl;
-    } else {
-        cout << "O periférico " << nomePeriferico << " não está ativo." << endl;
+bool Perifericos::verificarPeriferico(const std::string& nomeRecurso) const {
+    auto it = perifericos.find(nomeRecurso);
+    return it != perifericos.end() && it->second;
+}
+
+void Perifericos::exibirPerifericos() const {
+    for (const auto& [recurso, estado] : perifericos) {
+        std::cout << recurso << ": " << (estado ? "Em uso" : "Disponível") << std::endl;
     }
 }

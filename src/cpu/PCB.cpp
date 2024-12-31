@@ -58,22 +58,24 @@ void PCB::alocarMemoria(int enderecoBase, int limite) {
     std::cout << "Memória alocada ao processo " << pid << ": Base=" << enderecoBase << ", Limite=" << limite << "\n";
 }
 
+bool PCB::verificarAcessoMemoria(int endereco) const {
+    if (memoriaAlocada.empty()) return false;
+    return endereco >= memoriaAlocada[0] && endereco <= memoriaAlocada[1];
+}
+
 void PCB::liberarMemoria() {
     memoriaAlocada.clear();
     std::cout << "Memória liberada para o processo " << pid << "\n";
 }
 
+// Gerenciamento de recursos (I/O)
 void PCB::associarRecurso(const std::string& nomeRecurso, bool alocado) {
-    recursos[nomeRecurso] = alocado;
-    std::cout << "Recurso " << nomeRecurso << (alocado ? " associado" : " liberado") << " ao processo " << pid << "\n";
+    recursos.estadoPeriferico(nomeRecurso, alocado);
+    std::cout << "Recurso " << nomeRecurso << (alocado ? " alocado" : " liberado") << " ao processo " << pid << ".\n";
 }
 
 bool PCB::verificarRecurso(const std::string& nomeRecurso) const {
-    auto it = recursos.find(nomeRecurso);
-    if (it != recursos.end()) {
-        return it->second;
-    }
-    return false;
+    return recursos.verificarPeriferico(nomeRecurso);
 }
 
 void PCB::exibirPCB() const {
@@ -103,8 +105,7 @@ void PCB::exibirPCB() const {
     }
 
     std::cout << "Recursos Associados:\n";
-    for (const auto& [recurso, status] : recursos) {
-        std::cout << "  - " << recurso << ": " << (status ? "Em uso" : "Disponível") << "\n";
-    }
+    recursos.exibirPerifericos();
+
     std::cout << "===============================\n\n";
 }

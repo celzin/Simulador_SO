@@ -21,15 +21,14 @@ void Core::activate() {
         pcb->exibirPCB(); // Imprime o estado inicial do PCB
 
         while (!pcb->quantumExpirado()) {
+            // Gerenciar recursos
+            gerenciarRecursos(pcb);
+
             // Executa uma instrução no pipeline
             uc.executarInstrucao(instructionAddress, pcb->registradores, ram, pcb->PC, disco, Clock, *pcb);
             pcb->decrementarQuantum();
 
-            // Verifica se há necessidade de bloquear o processo
-            gerenciarBloqueios(pcb);
-
-            // Finaliza o quantum do núcleo
-            if (pcb->quantumExpirado()) {
+            if (pcb->verificarEstado(BLOQUEADO)) {
                 break;
             }
         }
@@ -37,11 +36,9 @@ void Core::activate() {
         // Salvar o estado do processo
         pcb->salvarEstado(pipeline.getPipelineState());
 
-        // Exibe o estado final do PCB
         std::cout << "[Núcleo " << std::this_thread::get_id() << "] Finalizando execução do processo [PID: " << pcb->pid << "]:\n";
-        pcb->exibirPCB();
+        pcb->exibirPCB(); // Exibe o estado final do PCB
 
-        // Verifica o estado do processo após a execução
         if (pcb->quantumRestante == 0) {
             pcb->atualizarEstado(FINALIZADO);
             std::cout << "[Núcleo " << std::this_thread::get_id() << "] Processo [PID: " << pcb->pid << "] finalizado.\n";
@@ -60,9 +57,12 @@ void Core::run() {
     activate();
 }
 
-void Core::gerenciarBloqueios(PCB* processo) {
-    // Simula a verificação de recursos
-    if (processo->verificarRecurso("I/O")) {
-        escalonador.bloquearProcesso(processo);
+void Core::gerenciarRecursos(PCB* processo) {
+    // Simula uma verificação de recursos
+    std::string recursoNecessario = "teclado"; // Exemplo de recurso
+    if (!processo->verificarRecurso(recursoNecessario)) {
+        processo->associarRecurso(recursoNecessario, true); // Aloca o recurso
+    } else {
+        processo->atualizarEstado(BLOQUEADO); // Bloqueia o processo caso o recurso esteja indisponível
     }
 }
