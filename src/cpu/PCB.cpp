@@ -5,26 +5,32 @@
 PCB::PCB(int id, int quantum)
     : pid(id), estado(PRONTO), PC(0), quantumProcesso(quantum), quantumRestante(quantum) {}
 
-void PCB::salvarEstado() {
+void PCB::salvarEstado(const std::vector<int>& pipelineState) {
+    // Salva o estado do pipeline
+    estadoPipeline = pipelineState;
+
     // Salva os registradores no PCB
     std::vector<std::pair<int, bool>> registradoresAtuais = registradores.getAllRegisters();
     registradores.setAllRegisters(registradoresAtuais);
 
-    // Salva o estado do PC no PCB
+    // Salva o valor atual do PC
     this->PC = PC;
 
-    std::cout << "Estado do processo " << pid << " salvo no PCB.\n";
+    std::cout << "Estado completo do processo " << pid << " salvo no PCB.\n";
 }
 
-void PCB::restaurarEstado() {
-    // Restaura os registradores a partir do PCB
+void PCB::restaurarEstado(std::vector<int>& pipelineState) {
+    // Restaura o estado do pipeline
+    pipelineState = estadoPipeline;
+
+    // Restaura os registradores do PCB
     const std::vector<std::pair<int, bool>>& estadoRegistradores = registradores.getAllRegisters();
     registradores.setAllRegisters(estadoRegistradores);
 
-    // Restaura o estado do PC do PCB
+    // Restaura o valor do PC
     this->PC = PC;
 
-    std::cout << "Estado do processo " << pid << " restaurado do PCB.\n";
+    std::cout << "Estado completo do processo " << pid << " restaurado do PCB.\n";
 }
 
 void PCB::decrementarQuantum() {
@@ -35,14 +41,6 @@ void PCB::decrementarQuantum() {
 
 bool PCB::quantumExpirado() const {
     return quantumRestante <= 0;
-}
-
-void PCB::salvarEstadoPipeline(const std::vector<int>& pipelineState) {
-    estadoPipeline = pipelineState;
-}
-
-std::vector<int> PCB::obterEstadoPipeline() const {
-    return estadoPipeline;
 }
 
 void PCB::alocarMemoria(int enderecoBase, int limite) {
