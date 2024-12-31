@@ -22,6 +22,6 @@ bool Perifericos::verificarPeriferico(const std::string& nomeRecurso) const {
 
 void Perifericos::exibirPerifericos() const {
     for (const auto& [recurso, estado] : perifericos) {
-        std::cout << recurso << ": " << (estado ? "Em uso" : "Disponível") << std::endl;
+        std::cout << "- " << recurso << ": " << (estado ? "Em uso" : "Disponível") << std::endl;
     }
 }
