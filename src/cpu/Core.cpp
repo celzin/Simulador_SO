@@ -8,7 +8,7 @@ void Core::activate() {
         PCB* pcb = escalonador.obterProximoProcesso();
 
         if (pcb == nullptr) {
-            std::cerr << "Erro: Nenhum processo disponível para execução.\n";
+            std::cerr << "[Núcleo " << std::this_thread::get_id() << "] Erro: Nenhum processo disponível para execução.\n\n";
             return;
         }
 
@@ -16,27 +16,30 @@ void Core::activate() {
         std::vector<int> pipelineState;
 
         pcb->restaurarEstado(pipelineState); // Restaura o estado completo do processo
+
+        std::cout << "[Núcleo " << std::this_thread::get_id() << "] Iniciando execução do processo [PID: " << pcb->pid << "]\n\n";
         pcb->exibirPCB(); // Exibe o estado do PCB restaurado
 
         while (!pcb->quantumExpirado()) {
             uc.executarInstrucao(pcb->registradores, ram, pcb->PC, disco, Clock, *pcb);
             pcb->decrementarQuantum();
+            std::cout << "[PID: " << pcb->pid << "] Quantum Restante: " << pcb->quantumRestante << "\n\n";
         }
 
         pcb->salvarEstado(pipeline.getPipelineState()); // Salva o estado completo do processo
         pcb->estado = PRONTO;
-        pcb->exibirPCB(); // Exibe o estado do PCB após execução
 
         if (pcb->quantumRestante == 0) {
             pcb->estado = FINALIZADO;
-            std::cout << "Processo " << pcb->pid << " finalizado.\n";
+            std::cout << "[Núcleo " << std::this_thread::get_id() << "] Processo [PID: " << pcb->pid << "] finalizado.\n\n";
         } else {
+            std::cout << "[Núcleo " << std::this_thread::get_id() << "] Quantum expirado para o processo [PID: " << pcb->pid << "]. Retornando à fila.\n\n";
             escalonador.adicionarProcesso(pcb);
         }
     }
 }
 
 void Core::run() {
-    std::cout << "Executando o núcleo (Thread) com PC: " << PC << "\n";
+    std::cout << "Executando o núcleo (Thread) com PC: " << PC << "\n\n";
     activate();
 }

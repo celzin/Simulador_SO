@@ -67,7 +67,7 @@ bool PCB::verificarRecurso(const std::string& nomeRecurso) const {
 }
 
 void PCB::exibirPCB() const {
-    std::cout << "=================="  << "\n"
+    std::cout << "===============================" << "\n\n"
               << "[PCB] Processo ID: " << pid << "\n"
               << "Estado: " << (estado == PRONTO ? "PRONTO" : estado == EXECUCAO ? "EXECUCAO" : estado == BLOQUEADO ? "BLOQUEADO" : "FINALIZADO") << "\n"
               << "Quantum Total: " << quantumProcesso << ", Quantum Restante: " << quantumRestante << "\n"
@@ -75,11 +75,11 @@ void PCB::exibirPCB() const {
               << "Registradores:\n";
     registradores.display();
 
-    std::cout << "Memória Alocada: ";
+    std::cout << "Memória Alocada:\n";
     if (!memoriaAlocada.empty()) {
-        std::cout << "Base=" << memoriaAlocada[0] << ", Limite=" << memoriaAlocada[1] << "\n";
+        std::cout << "  Base: " << memoriaAlocada[0] << ", Limite: " << memoriaAlocada[1] << "\n";
     } else {
-        std::cout << "Nenhuma memória alocada\n";
+        std::cout << "  Nenhuma memória alocada\n";
     }
 
     std::cout << "Estado do Pipeline: ";
@@ -89,11 +89,12 @@ void PCB::exibirPCB() const {
         }
         std::cout << "\n";
     } else {
-        std::cout << "Nenhum estado salvo\n";
+        std::cout << "  Nenhum estado salvo\n";
     }
 
     std::cout << "Recursos Associados:\n";
     for (const auto& [recurso, status] : recursos) {
         std::cout << "  - " << recurso << ": " << (status ? "Em uso" : "Disponível") << "\n";
     }
+    std::cout << "===============================\n\n";
 }
