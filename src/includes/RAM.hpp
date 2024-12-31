@@ -24,6 +24,7 @@ public:
     void writeInstruction(int endereco, const Instruction& instr);
     Instruction fetchInstruction(int endereco) const;
 
+    bool isReserved(int endereco) const;
     void display() const;
     void displayI() const;
 };

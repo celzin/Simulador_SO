@@ -35,6 +35,7 @@ public:
     void run();   
 
 private:
+    void validateMemoryAccess(PCB* processo, int endereco);
     void gerenciarRecursos(PCB* processo);  
 };
 

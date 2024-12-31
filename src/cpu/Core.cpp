@@ -24,6 +24,10 @@ void Core::activate() {
             // Gerenciar recursos
             gerenciarRecursos(pcb);
 
+            // Validação de memória para uma instrução fictícia (exemplo: LOAD)
+            int enderecoMemoria = pcb->PC; // Aqui usamos PC como exemplo, ajustar para endereços reais conforme o contexto
+            validateMemoryAccess(pcb, enderecoMemoria);
+
             // Executa uma instrução no pipeline
             uc.executarInstrucao(instructionAddress, pcb->registradores, ram, pcb->PC, disco, Clock, *pcb);
             pcb->decrementarQuantum();
@@ -35,11 +39,11 @@ void Core::activate() {
 
         // Salvar o estado do processo
         pcb->salvarEstado(pipeline.getPipelineState());
-
         std::cout << "[Núcleo " << std::this_thread::get_id() << "] Finalizando execução do processo [PID: " << pcb->pid << "]:\n";
         pcb->exibirPCB(); // Exibe o estado final do PCB
-
-        if (pcb->quantumRestante == 0) {
+        
+        // if (pcb->quantumRestante == 0) {
+        if (pcb->quantumExpirado()) {
             pcb->atualizarEstado(FINALIZADO);
             std::cout << "[Núcleo " << std::this_thread::get_id() << "] Processo [PID: " << pcb->pid << "] finalizado.\n";
         } else if (pcb->verificarEstado(BLOQUEADO)) {
@@ -55,6 +59,13 @@ void Core::activate() {
 void Core::run() {
     std::cout << "Executando o núcleo (Thread) com PC: " << PC << "\n\n";
     activate();
+}
+
+void Core::validateMemoryAccess(PCB* processo, int endereco) {
+    if (!processo->verificarAcessoMemoria(endereco) || ram.isReserved(endereco)) {
+        std::cerr << "[Erro] Acesso inválido à memória no endereço " << endereco << " pelo processo " << processo->pid << "\n";
+        processo->atualizarEstado(BLOQUEADO); // Bloqueia o processo caso o acesso seja inválido
+    }
 }
 
 void Core::gerenciarRecursos(PCB* processo) {

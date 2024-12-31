@@ -53,7 +53,19 @@ bool PCB::quantumExpirado() const {
     return quantumRestante <= 0;
 }
 
-void PCB::alocarMemoria(int enderecoBase, int limite) {
+// Gerenciamento de memoria
+void PCB::alocarMemoria(RAM& ram, int enderecoBase, int limite) {
+    // Verifica se a memória já está alocada
+    for (int i = enderecoBase; i <= limite; ++i) {
+        if (ram.isReserved(i)) {
+            std::cerr << "Erro: Endereço " << i << " já está reservado.\n";
+            return;
+        }
+    }
+    // Aloca na RAM e registra no PCB
+    for (int i = enderecoBase; i <= limite; ++i) {
+        ram.write(i, 0); // Inicializa os endereços na RAM
+    }
     memoriaAlocada = {enderecoBase, limite};
     std::cout << "Memória alocada ao processo " << pid << ": Base=" << enderecoBase << ", Limite=" << limite << "\n";
 }
@@ -63,9 +75,14 @@ bool PCB::verificarAcessoMemoria(int endereco) const {
     return endereco >= memoriaAlocada[0] && endereco <= memoriaAlocada[1];
 }
 
-void PCB::liberarMemoria() {
-    memoriaAlocada.clear();
-    std::cout << "Memória liberada para o processo " << pid << "\n";
+void PCB::liberarMemoria(RAM& ram) {
+    if (!memoriaAlocada.empty()) {
+        for (int i = memoriaAlocada[0]; i <= memoriaAlocada[1]; ++i) {
+            ram.write(i, 0); // Libera os endereços na RAM
+        }
+        memoriaAlocada.clear();
+        std::cout << "Memória liberada para o processo " << pid << "\n";
+    }
 }
 
 // Gerenciamento de recursos (I/O)

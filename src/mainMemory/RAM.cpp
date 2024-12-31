@@ -38,6 +38,13 @@ Instruction RAM::fetchInstruction(int endereco) const {
     return Instruction(ADD, 0, 0, 0);
 }
 
+bool RAM::isReserved(int endereco) const {
+    if (endereco < 0 || endereco >= tamanho) {
+        return true; // Fora do limite, considerado reservado
+    }
+    return memoria[endereco] != 0; // Qualquer valor diferente de 0 indica que está reservado
+}
+
 void RAM::display() const {
     for (int i = 0; i < tamanho; i++) {
         std::cout << "Endereço " << i << " -> " << memoria[i] << std::endl;
