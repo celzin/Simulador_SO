@@ -32,10 +32,11 @@ int main() {
         return -1;
     }
 
-    // Criando 2 processos (PCBs) com quantum de 5 ciclos
+    // Criando 3 processos (PCBs) com quantuns fixos
     std::vector<PCB*> pcbs;
-    pcbs.push_back(new PCB(1, 5, regs));  // Processo 1 com quantum 5
-    pcbs.push_back(new PCB(2, 5, regs));  // Processo 2 com quantum 5
+    pcbs.push_back(new PCB(1, 20, regs));  // Processo 1 com quantum 20
+    pcbs.push_back(new PCB(2, 15, regs));  // Processo 2 com quantum 15
+    pcbs.push_back(new PCB(3, 10, regs));  // Processo 3 com quantum 10
 
     // Adicionando os processos ao escalonador
     for (auto& pcb : pcbs) {
@@ -43,10 +44,10 @@ int main() {
     }
 
     // Criando múltiplos núcleos
-    const int NUM_NUCLEOS = 1;  // Definindo o número de núcleos
+    const int NUM_NUCLEOS = 2;
     std::vector<Core> cores;
     for (int i = 0; i < NUM_NUCLEOS; ++i) {
-        cores.push_back(Core(instructionAddress, ram, disco, escalonador));  // Criando núcleos
+        cores.push_back(Core(instructionAddress, ram, disco, escalonador));
     }
 
     // Executando os núcleos em threads
@@ -66,8 +67,10 @@ int main() {
     // cout << "\nDados DISCO\n";
     // disco.display();
 
-    // cout << "\nEstado atual da RAM:\n";
-    // ram.displayI();
+    // Limpando memória
+    // for (auto& pcb : pcbs) {
+    //     delete pcb;
+    // }
     
     return 0;
 }
