@@ -17,17 +17,17 @@ enum EstadoProcesso {
 class PCB {
 public:
     int pid;
-    EstadoProcesso estado;
     int PC;
-    Registers registradores;
     int quantumProcesso;
     int quantumRestante;
+    EstadoProcesso estado;
+    Registers registradores;
 
     std::vector<int> memoriaAlocada;  // Memória alocada ao processo (endereço base e limite)
     std::vector<int> estadoPipeline;  // Estado do pipeline (valores intermediários)
     std::unordered_map<std::string, bool> recursos; // Recursos associados ao processo
 
-    PCB(int id, int quantum);
+    PCB(int id, int quantum, const Registers& regs);
 
     // Métodos para salvar e restaurar estado do PCB
     void salvarEstado(const std::vector<int>& pipelineState);

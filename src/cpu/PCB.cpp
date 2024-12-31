@@ -2,8 +2,8 @@
 #include <iostream>
 #include <iomanip>
 
-PCB::PCB(int id, int quantum)
-    : pid(id), estado(PRONTO), PC(0), quantumProcesso(quantum), quantumRestante(quantum) {}
+PCB::PCB(int id, int quantum, const Registers& regs)
+    : pid(id), estado(PRONTO), PC(0), quantumProcesso(quantum), quantumRestante(quantum), registradores(regs) {}
 
 void PCB::salvarEstado(const std::vector<int>& pipelineState) {
     // Salva o estado do pipeline

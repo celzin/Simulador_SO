@@ -1,7 +1,7 @@
 #include "../includes/Core.hpp"
 
-Core::Core(RAM& ram, Disco& disco, Escalonador& escalonador) 
-    : ram(ram), disco(disco), PC(0), Clock(0), escalonador(escalonador) {}
+Core::Core(int instructionAddress, RAM& ram, Disco& disco, Escalonador& escalonador) 
+    : instructionAddress(instructionAddress), ram(ram), disco(disco), PC(0), Clock(0), escalonador(escalonador) {}
 
 void Core::activate() {
     while (!escalonador.filaVazia()) {
@@ -21,7 +21,7 @@ void Core::activate() {
         pcb->exibirPCB(); // Exibe o estado do PCB restaurado
 
         while (!pcb->quantumExpirado()) {
-            uc.executarInstrucao(pcb->registradores, ram, pcb->PC, disco, Clock, *pcb);
+            uc.executarInstrucao(instructionAddress, pcb->registradores, ram, pcb->PC, disco, Clock, *pcb);
             pcb->decrementarQuantum();
             std::cout << "[PID: " << pcb->pid << "] Quantum Restante: " << pcb->quantumRestante << "\n\n";
         }

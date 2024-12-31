@@ -19,16 +19,18 @@
 
 class Core {
 public:
+    int PC;                         
+    int Clock;         
+    int instructionAddress;
+
     Registers regs;                
     UnidadeControle uc;           
-    int PC;                         
     RAM& ram;               
     Disco& disco;        
-    int Clock;                
     Escalonador& escalonador;    
     Pipeline pipeline; 
 
-    Core(RAM& ram, Disco& disco, Escalonador& escalonador);  // Construtor com escalonador
+    Core(int instructionAddress, RAM& ram, Disco& disco, Escalonador& escalonador);  // Construtor com escalonador
     void activate();  
     void run();   
 };
