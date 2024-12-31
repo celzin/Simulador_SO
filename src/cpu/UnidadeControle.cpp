@@ -15,7 +15,7 @@ void UnidadeControle::executarInstrucao(Registers& regs, RAM& ram, int& PC, Disc
     std::cout << "Executando processo " << pcb.pid << " no PC: " << PC << "\n";
     pcb.decrementarQuantum();
     // Executa o pipeline do processo
-    pipeline.PipelineProcess(regs, ram, PC, "data/instructions.txt", "data/setRegisters.txt", disco, Clock);
+    pipeline.PipelineProcess(regs, ram, PC, "data/instr/instructions1.txt", "data/setRegisters.txt", disco, Clock);
     pcb.PC = PC; // Atualiza o estado do PCB após a execução
     pcb.salvarEstado(pipeline.getPipelineState()); // Atualiza o PCB com o novo estado
 }
