@@ -1,23 +1,21 @@
 #include "../includes/UnidadeControle.hpp"
 
 void UnidadeControle::executarInstrucao(Registers& regs, RAM& ram, int& PC, Disco& disco, int& Clock, PCB& pcb) {
-    // Verifica se o processo tem quantum restante
+    // Verifica se o quantum expirou
     if (pcb.quantumExpirado()) {
-        cout << "Quantum expirado para o processo " << pcb.pid << ". Troca de contexto.\n";
-        // Troca de contexto: salvar o estado do processo atual
-        pcb.salvarEstado();
-        // A lógica de troca de contexto irá aqui, por exemplo, escolher outro PCB
-        return;  // A execução do processo será interrompida e outro será escolhido
+        std::cout << "Quantum expirado para o processo " << pcb.pid << ". Troca de contexto.\n";
+        pcb.salvarEstado(pipeline.getPipelineState()); // Salva o estado completo
+        return;
     }
 
-    PC = pcb.PC;  // Utilizando o PC do processo
-    cout << "Executando processo " << pcb.pid << " no PC: " << PC << endl;
-
-    pcb.decrementarQuantum();  // Decrementa o quantum restante
-
-    // Executa a instrução no pipeline ou faz qualquer outro trabalho necessário
+    // Pipeline inicializado para restaurar
+    std::vector<int> pipelineState;
+    pcb.restaurarEstado(pipelineState); // Restaura o estado completo do processo
+    PC = pcb.PC; // Atualiza o PC do processo
+    std::cout << "Executando processo " << pcb.pid << " no PC: " << PC << "\n";
+    pcb.decrementarQuantum();
+    // Executa o pipeline do processo
     pipeline.PipelineProcess(regs, ram, PC, "data/instructions.txt", "data/setRegisters.txt", disco, Clock);
-
-    // Atualiza o estado do processo no PCB
-    pcb.restaurarEstado();
+    pcb.PC = PC; // Atualiza o estado do PCB após a execução
+    pcb.salvarEstado(pipeline.getPipelineState()); // Atualiza o PCB com o novo estado
 }

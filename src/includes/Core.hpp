@@ -25,7 +25,8 @@ public:
     RAM& ram;               
     Disco& disco;        
     int Clock;                
-    Escalonador& escalonador;      
+    Escalonador& escalonador;    
+    Pipeline pipeline; 
 
     Core(RAM& ram, Disco& disco, Escalonador& escalonador);  // Construtor com escalonador
     void activate();  
