@@ -34,7 +34,7 @@ int main() {
     }
 
     // Criando múltiplos núcleos
-    const int NUM_NUCLEOS = 2;  // Definindo o número de núcleos
+    const int NUM_NUCLEOS = 1;  // Definindo o número de núcleos
     std::vector<Core> cores;
     for (int i = 0; i < NUM_NUCLEOS; ++i) {
         cores.push_back(Core(ram, disco, escalonador));  // Criando núcleos
