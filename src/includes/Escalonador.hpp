@@ -8,15 +8,18 @@
 
 class Escalonador {
 private:
-    std::queue<PCB*> filaProcessos;  // Fila de processos prontos
+    std::queue<PCB*> filaProntos;
+    std::queue<PCB*> filaBloqueados;
     std::mutex mtx;
 
 public:
-    Escalonador();  // Construtor que inicializa a fila
+    Escalonador(); 
     void adicionarProcesso(PCB* processo);  // Adiciona um processo à fila
     PCB* obterProximoProcesso();  // Retorna o próximo processo a ser executado
 
-    bool filaVazia() const;  // Verifica se a fila está vazia
+    void bloquearProcesso(PCB* processo);
+    void desbloquearProcessos(); 
+    bool filaVazia() const;  
 };
 
 #endif
