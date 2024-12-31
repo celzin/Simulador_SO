@@ -7,7 +7,7 @@
 #include "includes/InstructionDecode.hpp"
 #include "includes/Pipeline.hpp"
 #include "includes/Core.hpp"
-#include "includes/perifericos.hpp"
+#include "includes/Perifericos.hpp"
 
 #include <vector>
 #include <iostream>

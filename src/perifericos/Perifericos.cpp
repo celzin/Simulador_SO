@@ -1,4 +1,4 @@
-#include "../includes/perifericos.hpp"
+#include "../includes/Perifericos.hpp"
 
 void Perifericos::estadoPeriferico(const string& nomePeriferico, bool estado) {
     if (perifericos.find(nomePeriferico) != perifericos.end()) {
