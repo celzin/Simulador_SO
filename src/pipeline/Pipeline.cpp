@@ -10,14 +10,16 @@ using namespace std;
 
 Pipeline::Pipeline() {}
 
-void Pipeline::PipelineProcess(Registers& regs, RAM& ram, int& PC, const string& instrFilename, const string& regsFilename, Disco& disco, int& Clock) {
-    
-    setRegistersFromFile(regs, regsFilename);
+std::vector<int> Pipeline::getPipelineState() const {
+    return pipelineState; // Retorna o estado atual
+}
 
+void Pipeline::PipelineProcess(Registers& regs, RAM& ram, int& PC, const std::string& instrFilename, const std::string& regsFilename, Disco& disco, int& Clock) {
+    setRegistersFromFile(regs, regsFilename);
     int instructionAddress = loadInstructionsFromFile(ram, instrFilename);
 
     if (instructionAddress == -1) {
-        cerr << "Erro ao carregar as instruções." << endl;
+        std::cerr << "Erro ao carregar as instruções.\n";
         return;
     }
 
@@ -28,20 +30,17 @@ void Pipeline::PipelineProcess(Registers& regs, RAM& ram, int& PC, const string&
         DecodedInstruction decodedInstr = InstructionDecode(instr, regs);
         Clock++;
 
-        // cout << endl << "[ID]: "
-        //      << "Opcode: " << decodedInstr.opcode
-        //      << ", Destino: R" << decodedInstr.destiny
-        //      << ", Operando 1: " << decodedInstr.value1
-        //      << ", Operando 2: " << decodedInstr.value2 << endl;
+        // std::cout << "[ID]: Opcode: " << decodedInstr.opcode
+        //           << ", Destino: R" << decodedInstr.destiny
+        //           << ", Operando 1: " << decodedInstr.value1
+        //           << ", Operando 2: " << decodedInstr.value2 << "\n";
 
         Execute(decodedInstr, regs, ram, PC, disco, Clock);
-        
+        Clock++;
+
+        // Salva o estado do pipeline
+        pipelineState = {decodedInstr.opcode, decodedInstr.value1, decodedInstr.value2, decodedInstr.destiny};
         PC += 4;
-
-        // cout << "REGS:" << endl;
-        // regs.display(); 
-
-        cout << "Clock: " << Clock << endl;
     }
 }
 
