@@ -30,9 +30,12 @@ public:
     Escalonador& escalonador;    
     Pipeline pipeline; 
 
-    Core(int instructionAddress, RAM& ram, Disco& disco, Escalonador& escalonador);  // Construtor com escalonador
+    Core(int instructionAddress, RAM& ram, Disco& disco, Escalonador& escalonador);
     void activate();  
     void run();   
+
+private:
+    void gerenciarBloqueios(PCB* processo);
 };
 
 #endif
