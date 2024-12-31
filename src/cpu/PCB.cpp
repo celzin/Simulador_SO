@@ -5,6 +5,16 @@
 PCB::PCB(int id, int quantum, const Registers& regs)
     : pid(id), estado(PRONTO), PC(0), quantumProcesso(quantum), quantumRestante(quantum), registradores(regs) {}
 
+void PCB::atualizarEstado(EstadoProcesso novoEstado) {
+    estado = novoEstado;
+    std::cout << "[PCB] Processo " << pid << " alterado para estado: "
+              << (novoEstado == PRONTO ? "PRONTO" : novoEstado == EXECUCAO ? "EXECUCAO" : novoEstado == BLOQUEADO ? "BLOQUEADO" : "FINALIZADO") << std::endl;
+}
+
+bool PCB::verificarEstado(EstadoProcesso verEstado) const {
+    return estado == verEstado;
+}
+
 void PCB::salvarEstado(const std::vector<int>& pipelineState) {
     // Salva o estado do pipeline
     estadoPipeline = pipelineState;
@@ -67,7 +77,7 @@ bool PCB::verificarRecurso(const std::string& nomeRecurso) const {
 }
 
 void PCB::exibirPCB() const {
-    std::cout << "===============================" << "\n\n"
+    std::cout << "\n===============================" << "\n"
               << "[PCB] Processo ID: " << pid << "\n"
               << "Estado: " << (estado == PRONTO ? "PRONTO" : estado == EXECUCAO ? "EXECUCAO" : estado == BLOQUEADO ? "BLOQUEADO" : "FINALIZADO") << "\n"
               << "Quantum Total: " << quantumProcesso << ", Quantum Restante: " << quantumRestante << "\n"

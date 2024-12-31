@@ -29,23 +29,21 @@ public:
 
     PCB(int id, int quantum, const Registers& regs);
 
-    // Métodos para salvar e restaurar estado do PCB
     void salvarEstado(const std::vector<int>& pipelineState);
     void restaurarEstado(std::vector<int>& pipelineState);
     
-    // Gerenciamento de quantum
     void decrementarQuantum();
     bool quantumExpirado() const;
 
-    // Gerenciamento de memória
+    void atualizarEstado(EstadoProcesso novoEstado); 
+    bool verificarEstado(EstadoProcesso verEstado) const; 
+
     void alocarMemoria(int enderecoBase, int limite);
     void liberarMemoria();
 
-    // Gerenciamento de recursos
     void associarRecurso(const std::string& nomeRecurso, bool alocado);
     bool verificarRecurso(const std::string& nomeRecurso) const;
 
-    // Exibição das informações do PCB
     void exibirPCB() const;
 };
 
