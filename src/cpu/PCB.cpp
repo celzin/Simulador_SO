@@ -2,8 +2,8 @@
 #include <iostream>
 #include <iomanip>
 
-PCB::PCB(int id, int quantum, const Registers& regs)
-    : pid(id), estado(PRONTO), PC(0), quantumProcesso(quantum), quantumRestante(quantum), registradores(regs) {}
+PCB::PCB(int id, int quantum, const Registers& regs, int enderecoBase, int limite)
+    : pid(id), estado(PRONTO), PC(0), quantumProcesso(quantum), quantumRestante(quantum), registradores(regs), enderecoBaseInstrucoes(enderecoBase), enderecoLimiteInstrucoes(limite) {}
 
 void PCB::atualizarEstado(EstadoProcesso novoEstado) {
     estado = novoEstado;
@@ -46,6 +46,7 @@ void PCB::restaurarEstado(std::vector<int>& pipelineState) {
 void PCB::decrementarQuantum() {
     if (quantumRestante > 0) {
         quantumRestante--;
+        cout << "[Quantum] Processo " << pid << ", Quantum restante: " << quantumRestante << endl;
     }
 }
 
@@ -125,4 +126,12 @@ void PCB::exibirPCB() const {
     recursos.exibirPerifericos();
 
     std::cout << "===============================\n\n";
+}
+
+int PCB::getEnderecoBaseInstrucoes() const {
+    return enderecoBaseInstrucoes;
+}
+
+int PCB::getLimiteInstrucoes() const {
+    return enderecoLimiteInstrucoes;
 }

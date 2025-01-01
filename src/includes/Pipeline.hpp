@@ -8,6 +8,8 @@
 #include "ULA.hpp"
 #include "RAM.hpp"
 #include "InstructionDecode.hpp"
+#include "PCB.hpp"
+
 #include <string>
 #include <vector>
 
@@ -19,8 +21,8 @@ private:
 
 public:
     Pipeline();
-    void PipelineProcess(int instructionAddress, Registers& regs, RAM& ram, int& PC, Disco& Disco, int& Clock);
-    Instruction InstructionFetch(RAM& ram, int endereco);
+    void PipelineProcess(const Instruction& instr, Registers& regs, RAM& ram, int& PC, Disco& Disco, int& Clock);
+    Instruction InstructionFetch(RAM& ram, int endereco, PCB* pcb);
     void Wb(const DecodedInstruction& decoded, int& resultado, RAM& ram, Disco& disco, int& Clock);
     void MemoryAccess(const DecodedInstruction& decoded, int resultado, Registers& regs, int& Clock);
     void Execute(const DecodedInstruction& decoded, Registers& regs, RAM& ram, int& PC, Disco& Disco, int& Clock);

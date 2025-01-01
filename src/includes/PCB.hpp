@@ -22,6 +22,8 @@ public:
     int PC;
     int quantumProcesso;
     int quantumRestante;
+    int enderecoBaseInstrucoes;
+    int enderecoLimiteInstrucoes;
     EstadoProcesso estado;
     Registers registradores;
     Perifericos recursos; 
@@ -29,7 +31,7 @@ public:
     std::vector<int> memoriaAlocada;  // Memória alocada ao processo (endereço base e limite)
     std::vector<int> estadoPipeline;  // Estado do pipeline (valores intermediários)
 
-    PCB(int id, int quantum, const Registers& regs);
+    PCB(int id, int quantum, const Registers& regs, int enderecoBaseInstrucoes, int enderecoLimiteInstrucoes);
 
     void salvarEstado(const std::vector<int>& pipelineState);
     void restaurarEstado(std::vector<int>& pipelineState);
@@ -48,6 +50,9 @@ public:
     bool verificarRecurso(const std::string& nomeRecurso) const;
 
     void exibirPCB() const;
+
+    int getEnderecoBaseInstrucoes() const;
+    int getLimiteInstrucoes() const;
 };
 
 #endif

@@ -26,17 +26,66 @@ int main() {
     
     // Configurando os registradores e instruções
     disco.setRegistersFromFile(regs, "data/setRegisters.txt");
-    int instructionAddress = disco.loadInstructionsFromFile(ram, "data/instr/instructions1.txt");
-    if (instructionAddress == -1) {
-        cerr << "Erro ao carregar as instruções.\n";
-        return -1;
-    }
+    // int instructionAddress = disco.loadInstructionsFromFile(ram, "data/instr/instructions1.txt");
+    // if (instructionAddress == -1) {
+    //    cerr << "Erro ao carregar as instruções.\n";
+    //     return -1;
+    // }
 
     // Criando processos (PCBs) com quantuns fixos
+    int enderecoAtual = 0; // Endereço inicial na RAM
     vector<PCB*> pcbs;
-    pcbs.push_back(new PCB(1, 20, regs));  // Processo 1 com quantum 20
-    pcbs.push_back(new PCB(2, 15, regs));  // Processo 2 com quantum 15
-    pcbs.push_back(new PCB(3, 10, regs));  // Processo 3 com quantum 10
+
+    // Lista de arquivos de instrução
+    vector<string> arquivosInstrucoes = {
+        "data/instr/instructions1.txt",
+        "data/instr/instructions2.txt",
+        "data/instr/instructions3.txt",
+    };
+
+    for (int i = 0; i < arquivosInstrucoes.size(); ++i) {
+        int quantidadeInstrucoes = disco.loadInstructionsFromFile(ram, arquivosInstrucoes[i], enderecoAtual);
+        if (quantidadeInstrucoes == -1) {
+            cerr << "Erro ao quantificar instruções do arquivo: " << arquivosInstrucoes[i] << endl;
+            return -1;
+        }
+
+        // Cria o PCB associado à faixa de memória de instruções
+        PCB* novoPCB = new PCB(i + 1, 50, regs, enderecoAtual, enderecoAtual + quantidadeInstrucoes - 1);
+
+        // Configura o PC inicial do processo
+        novoPCB->PC = enderecoAtual;
+
+        pcbs.push_back(novoPCB);
+
+        std::cout << "Processo " << i + 1
+                  << ": Base Instruções = " << enderecoAtual
+                  << ", Limite Instruções = " << enderecoAtual + quantidadeInstrucoes - 1
+                  << ", PC Inicial = " << novoPCB->PC << std::endl;
+
+        // Atualiza o endereço base para o próximo conjunto de instruções
+        enderecoAtual += quantidadeInstrucoes;
+    }
+
+
+    // for(int i = 0; i < arquivosInstrucoes.size(); ++i){
+    //     int quantidadeInstrucoes = disco.loadInstructionsFromFile(ram, arquivosInstrucoes[i], enderecoAtual);
+    //     if(quantidadeInstrucoes == -1){
+    //         cerr << "Erro ao quantificar instruções do arquivo: " << arquivosInstrucoes[i] << endl;
+    //         return -1;
+    //     }
+
+    //     // Cria o PCB associado a faixa de memória de instruções
+    //     pcbs.push_back(new PCB(i + 1, 50, regs, enderecoAtual, enderecoAtual + quantidadeInstrucoes - 1));
+
+    //     std::cout << "Processo " << i + 1 
+    //       << ": Base Instruções = " << enderecoAtual 
+    //       << ", Limite Instruções = " << enderecoAtual + quantidadeInstrucoes - 1 << std::endl;
+
+        
+    //     // Atualiza o endereço base para o próximo conjunto de instrções
+    //     enderecoAtual += quantidadeInstrucoes;
+    // }
 
     // Alocação de memória para cada processo
     for (auto& pcb : pcbs) {
@@ -52,10 +101,10 @@ int main() {
     }
 
     // Criando múltiplos núcleos
-    const int NUM_NUCLEOS = 2;
+    const int NUM_NUCLEOS = 1;
     vector<Core> cores;
     for (int i = 0; i < NUM_NUCLEOS; ++i) {
-        cores.push_back(Core(instructionAddress, ram, disco, escalonador)); // Criando núcleos
+        cores.push_back(Core(ram, disco, escalonador)); // Criando núcleos
     }
 
     // Executando os núcleos em threads
@@ -87,12 +136,12 @@ int main() {
     // }
 
     // Exibindo o estado final da RAM
-    // cout << "\n===== Estado Final da RAM =====\n";
-    // ram.display();
+    cout << "\n===== Estado Final da RAM =====\n";
+    ram.display();
 
     // Exibindo o estado final do Disco
-    // cout << "\n===== Estado Final do Disco =====\n";
-    // disco.display();
+    cout << "\n===== Estado Final do Disco =====\n";
+    disco.display();
 
     // Liberando memória dos processos
     for (auto& pcb : pcbs) {

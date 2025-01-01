@@ -24,7 +24,7 @@ public:
     void write(int valor); 
     void display() const;  
     void setRegistersFromFile(Registers& regs, const std::string& regsFilename);
-    int loadInstructionsFromFile(RAM& ram, const std::string& instrFilename);
+    int loadInstructionsFromFile(RAM& ram, const std::string& instrFilename, int enderecoBase);
 };
 
 #endif

@@ -13,6 +13,7 @@ enum Opcode {
     IF_igual = 8,
     IF_maior = 9,
     ENQ = 10,
+    NOP
 };
 
 #endif

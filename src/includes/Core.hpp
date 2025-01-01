@@ -30,7 +30,7 @@ public:
     Escalonador& escalonador;    
     Pipeline pipeline; 
 
-    Core(int instructionAddress, RAM& ram, Disco& disco, Escalonador& escalonador);
+    Core(RAM& ram, Disco& disco, Escalonador& escalonador);
     void activate();  
     void run();   
 

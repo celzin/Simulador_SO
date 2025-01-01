@@ -53,7 +53,7 @@ void Disco::setRegistersFromFile(Registers& regs, const string& regsFilename) {
     regsFile.close();
 }
 
-int Disco::loadInstructionsFromFile(RAM& ram, const string& instrFilename) {
+int Disco::loadInstructionsFromFile(RAM& ram, const string& instrFilename, int enderecoBase) {
     ifstream file(instrFilename);
     if (!file.is_open()) {
         cerr << "Erro ao abrir o arquivo de instruções: " << instrFilename << endl;
@@ -61,7 +61,7 @@ int Disco::loadInstructionsFromFile(RAM& ram, const string& instrFilename) {
     }
 
     string line;
-    int instructionAddress = 0;
+    int enderecoAtual = enderecoBase; // Use o enderecoBase como ponto inicial
 
     while (getline(file, line)) {
         string opcodeStr;
@@ -92,8 +92,9 @@ int Disco::loadInstructionsFromFile(RAM& ram, const string& instrFilename) {
 
         Instruction instr(opcode, reg1, reg2, reg3);
 
-        if (instructionAddress < ram.tamanho) {
-            ram.instruction_memory[instructionAddress++] = instr;
+        // Verifique se o endereço está dentro dos limites da RAM
+        if (enderecoAtual < ram.tamanho) {
+            ram.instruction_memory[enderecoAtual++] = instr;
         } else {
             cerr << "Erro: memória RAM cheia, não é possível carregar mais instruções." << endl;
             break;
@@ -101,5 +102,6 @@ int Disco::loadInstructionsFromFile(RAM& ram, const string& instrFilename) {
     }
     file.close();
 
-    return instructionAddress;
+    // Retorne o número de instruções carregadas
+    return enderecoAtual - enderecoBase;
 }

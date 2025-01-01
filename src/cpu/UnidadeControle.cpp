@@ -1,6 +1,6 @@
 #include "../includes/UnidadeControle.hpp"
 
-void UnidadeControle::executarInstrucao(int instructionAddress, Registers& regs, RAM& ram, int& PC, Disco& disco, int& Clock, PCB& pcb) {
+void UnidadeControle::executarInstrucao(const Instruction& instr, Registers& regs, RAM& ram, int& PC, Disco& disco, int& Clock, PCB& pcb) {
     // Verifica se o quantum expirou
     if (pcb.quantumExpirado()) {
         std::cout << "Quantum expirado para o processo " << pcb.pid << ". Troca de contexto.\n";
@@ -15,7 +15,7 @@ void UnidadeControle::executarInstrucao(int instructionAddress, Registers& regs,
     std::cout << "Executando processo " << pcb.pid << " no PC: " << PC << "\n";
     pcb.decrementarQuantum();
     // Executa o pipeline do processo
-    pipeline.PipelineProcess(instructionAddress, regs, ram, PC, disco, Clock);
+    pipeline.PipelineProcess(instr, regs, ram, PC, disco, Clock);
     pcb.PC = PC; // Atualiza o estado do PCB após a execução
     pcb.salvarEstado(pipeline.getPipelineState()); // Atualiza o PCB com o novo estado
 }
