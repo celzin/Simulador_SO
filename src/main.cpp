@@ -30,11 +30,7 @@ int main() {
     disco.setRegistersFromFile(regs, "data/setRegisters.txt");
 
     // Lista de arquivos de instrução
-    vector<string> arquivosInstrucoes = {
-        "data/instr/instructions1.txt",
-        "data/instr/instructions2.txt",
-        "data/instr/instructions3.txt",
-    };
+    vector<string> arquivosInstrucoes = disco.listInstructionsFile("data/instr");
 
     // Criando pcbs a partir da lista de arquivos de instruções e carregando as instruções na RAM
     for (int i = 0; i < arquivosInstrucoes.size(); ++i) {

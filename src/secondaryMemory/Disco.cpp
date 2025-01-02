@@ -1,16 +1,16 @@
 #include "../includes/Disco.hpp"
 
-Disco::Disco() : memoria(LINHAS, std::vector<std::pair<int, bool>>(COLUNAS, {0, false})) {}
+Disco::Disco() : memoria(LINHAS, vector<pair<int, bool>>(COLUNAS, {0, false})) {}
 
 void Disco::write(int valor) {
-    std::lock_guard<std::mutex> lock(mtx);  // Bloqueia o mutex enquanto a função é executada
+    lock_guard<mutex> lock(mtx);  // Bloqueia o mutex enquanto a função é executada
     bool inserido = false;
 
     for (int j = 0; j < COLUNAS && !inserido; ++j) {
         for (int i = 0; i < LINHAS; ++i) {
             if (!memoria[i][j].second) {  // Verifica se a célula está livre
                 memoria[i][j] = {valor, true};  // Insere o valor
-                std::cout << "Valor " << valor << " inserido em [" << i << "][" << j << "]" << std::endl;
+                cout << "Valor " << valor << " inserido em [" << i << "][" << j << "]" << endl;
                 inserido = true;
                 return;
             }
@@ -18,7 +18,7 @@ void Disco::write(int valor) {
     }
 
     if (!inserido) {
-        std::cerr << "Erro: Disco cheio!" << std::endl;
+        cerr << "Erro: Disco cheio!" << endl;
     }
 }
 
@@ -28,9 +28,9 @@ void Disco::display() const {
             int valor = memoria[i][j].first;
             bool preenchido = memoria[i][j].second;
 
-            std::cout << (preenchido ? valor : 0) << " ";
+            cout << (preenchido ? valor : 0) << " ";
         }
-        std::cout << std::endl;
+        cout << endl;
     }
 }
 
@@ -104,4 +104,18 @@ int Disco::loadInstructionsFromFile(RAM& ram, const string& instrFilename, int e
 
     // Retorne o número de instruções carregadas
     return enderecoAtual - enderecoBase;
+}
+
+vector<string> Disco::listInstructionsFile(const string& dir){
+    vector<string> files;
+    for(const auto& entry : filesystem::directory_iterator(dir)){
+        if(entry.is_regular_file() && entry.path().extension() == ".txt"){
+            files.push_back(entry.path().string());
+        }
+    }
+    sort(files.begin(), files.end());
+    if(files.empty()){
+        cerr << "Erro: Nenhum arquivo de instruções encontrado no diretório: " << dir << endl;
+    }
+    return files;
 }
