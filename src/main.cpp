@@ -8,6 +8,7 @@
 #include "includes/Pipeline.hpp"
 #include "includes/Core.hpp"
 #include "includes/Perifericos.hpp"
+#include "includes/ProcessManager.hpp"
 
 #include <vector>
 #include <iostream>
@@ -20,8 +21,6 @@ int main() {
     Perifericos periferico;
     Escalonador escalonador;
     Registers regs;
-    vector<PCB*> pcbs;
-    int enderecoAtual = 0; // Endereço inicial na RAM
 
     // periferico.estadoPeriferico("teclado", true);
     // periferico.estadoPeriferico("mouse", true);
@@ -32,30 +31,8 @@ int main() {
     // Lista de arquivos de instrução
     vector<string> arquivosInstrucoes = disco.listInstructionsFile("data/instr");
 
-    // Criando pcbs a partir da lista de arquivos de instruções e carregando as instruções na RAM
-    for (int i = 0; i < arquivosInstrucoes.size(); ++i) {
-        int quantidadeInstrucoes = disco.loadInstructionsFromFile(ram, arquivosInstrucoes[i], enderecoAtual);
-        if (quantidadeInstrucoes == -1) {
-            cerr << "Erro ao quantificar instruções do arquivo: " << arquivosInstrucoes[i] << endl;
-            return -1;
-        }
-
-        // Cria o PCB associado à faixa de memória de instruções
-        PCB* novoPCB = new PCB(i + 1, 50, regs, enderecoAtual, enderecoAtual + quantidadeInstrucoes - 1);
-
-        // Configura o PC inicial do processo
-        novoPCB->PC = enderecoAtual;
-
-        pcbs.push_back(novoPCB);
-
-        std::cout << "Processo " << i + 1
-                  << ": Base Instruções = " << enderecoAtual
-                  << ", Limite Instruções = " << enderecoAtual + quantidadeInstrucoes - 1
-                  << ", PC Inicial = " << novoPCB->PC << std::endl;
-
-        // Atualiza o endereço base para o próximo conjunto de instruções
-        enderecoAtual += quantidadeInstrucoes;
-    }
+    // Criando PCBs
+    vector<PCB*> pcbs = ProcessManager::createPCBs(disco, ram, regs, arquivosInstrucoes);
 
     // Alocação de memória para cada processo
     for (auto& pcb : pcbs) {
