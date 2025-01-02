@@ -20,21 +20,14 @@ int main() {
     Perifericos periferico;
     Escalonador escalonador;
     Registers regs;
+    vector<PCB*> pcbs;
+    int enderecoAtual = 0; // Endereço inicial na RAM
 
     // periferico.estadoPeriferico("teclado", true);
     // periferico.estadoPeriferico("mouse", true);
     
-    // Configurando os registradores e instruções
+    // Configurando os registradores
     disco.setRegistersFromFile(regs, "data/setRegisters.txt");
-    // int instructionAddress = disco.loadInstructionsFromFile(ram, "data/instr/instructions1.txt");
-    // if (instructionAddress == -1) {
-    //    cerr << "Erro ao carregar as instruções.\n";
-    //     return -1;
-    // }
-
-    // Criando processos (PCBs) com quantuns fixos
-    int enderecoAtual = 0; // Endereço inicial na RAM
-    vector<PCB*> pcbs;
 
     // Lista de arquivos de instrução
     vector<string> arquivosInstrucoes = {
@@ -43,6 +36,7 @@ int main() {
         "data/instr/instructions3.txt",
     };
 
+    // Criando pcbs a partir da lista de arquivos de instruções e carregando as instruções na RAM
     for (int i = 0; i < arquivosInstrucoes.size(); ++i) {
         int quantidadeInstrucoes = disco.loadInstructionsFromFile(ram, arquivosInstrucoes[i], enderecoAtual);
         if (quantidadeInstrucoes == -1) {
@@ -66,26 +60,6 @@ int main() {
         // Atualiza o endereço base para o próximo conjunto de instruções
         enderecoAtual += quantidadeInstrucoes;
     }
-
-
-    // for(int i = 0; i < arquivosInstrucoes.size(); ++i){
-    //     int quantidadeInstrucoes = disco.loadInstructionsFromFile(ram, arquivosInstrucoes[i], enderecoAtual);
-    //     if(quantidadeInstrucoes == -1){
-    //         cerr << "Erro ao quantificar instruções do arquivo: " << arquivosInstrucoes[i] << endl;
-    //         return -1;
-    //     }
-
-    //     // Cria o PCB associado a faixa de memória de instruções
-    //     pcbs.push_back(new PCB(i + 1, 50, regs, enderecoAtual, enderecoAtual + quantidadeInstrucoes - 1));
-
-    //     std::cout << "Processo " << i + 1 
-    //       << ": Base Instruções = " << enderecoAtual 
-    //       << ", Limite Instruções = " << enderecoAtual + quantidadeInstrucoes - 1 << std::endl;
-
-        
-    //     // Atualiza o endereço base para o próximo conjunto de instrções
-    //     enderecoAtual += quantidadeInstrucoes;
-    // }
 
     // Alocação de memória para cada processo
     for (auto& pcb : pcbs) {
@@ -113,27 +87,10 @@ int main() {
         threads.push_back(thread(&Core::run, &core)); // Rodando cada núcleo em uma thread
     }
 
-    // Thread de desbloqueio de processos
-    // thread desbloqueio([&escalonador]() {
-    //     while (true) {
-    //         this_thread::sleep_for(chrono::seconds(5)); // Simula tempo para desbloqueio
-    //         escalonador.desbloquearProcessos();
-    //     }
-    // });
-
     // Aguardando que todas as threads terminem
     for (auto& th : threads) {
         th.join(); // Espera todas as threads terminarem
     }
-
-    // Finaliza a thread de desbloqueio
-    // desbloqueio.detach();
-
-    // Exibindo o estado final dos processos
-    // cout << "\n===== Estado Final dos Processos =====\n";
-    // for (auto& pcb : pcbs) {
-    //     pcb->exibirPCB();
-    // }
 
     // Exibindo o estado final da RAM
     cout << "\n===== Estado Final da RAM =====\n";
