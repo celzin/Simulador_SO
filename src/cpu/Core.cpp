@@ -69,7 +69,7 @@ void Core::activate() {
 
 
 void Core::run() {
-    std::cout << "Executando o núcleo (Thread) com PC: " << PC << "\n\n";
+    std::cout << "\n" << "Executando o núcleo (Thread) com PC: " << PC << "\n\n";
     activate();
 }
 
