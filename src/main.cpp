@@ -14,7 +14,7 @@
 #include <iostream>
 #include <fstream>
 
-#define NUM_NUCLEOS 4
+#define NUM_NUCLEOS 2
 #define OUTPUT_DIR "data/logs"
 
 using namespace std;
@@ -25,6 +25,16 @@ int main() {
     Perifericos periferico;
     Escalonador escalonador;
     Registers regs;
+
+    if (!filesystem::exists(OUTPUT_DIR)) {
+        filesystem::create_directories(OUTPUT_DIR);
+    }
+
+    ofstream globalLog(string(OUTPUT_DIR) + "/global_log.txt", ios::out);
+    if (!globalLog.is_open()) {
+        cerr << "Erro ao abrir o arquivo de log global.\n";
+        return -1;
+    }
 
     // periferico.estadoPeriferico("teclado", true);
     // periferico.estadoPeriferico("mouse", true);
@@ -38,17 +48,13 @@ int main() {
     // Criando PCBs
     vector<PCB*> pcbs = ProcessManager::createPCBs(disco, ram, regs, arquivosInstrucoes);
 
-    // Alocação de memória para cada processo
+    // Alocação de memória para cada processo && Adicionando os processos ao escalonador
     for (auto& pcb : pcbs) {
         int enderecoBase = 0 + (pcb->pid - 1) * 5; // Exemplo: faixas de memória de 5 endereços por processo
         int limite = enderecoBase + 4;
 
         pcb->alocarMemoria(ram, enderecoBase, limite);
-    }
-
-    // Adicionando os processos ao escalonador
-    for (auto& pcb : pcbs) {
-        escalonador.adicionarProcesso(pcb);
+        escalonador.adicionarProcesso(pcb, globalLog);
     }
 
     // Criando múltiplos núcleos
@@ -82,5 +88,6 @@ int main() {
         delete pcb;
     }
 
+    globalLog.close();
     return 0;
 }

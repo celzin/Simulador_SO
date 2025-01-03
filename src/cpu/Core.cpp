@@ -6,7 +6,7 @@ Core::Core(RAM& ram, Disco& disco, Escalonador& escalonador)
     : ram(ram), disco(disco), PC(0), Clock(0), escalonador(escalonador) {}
 
 void Core::activate(ofstream& outfile) {
-    while (!escalonador.filaVazia()) {
+    while (escalonador.temProcessosProntos()) {
         PCB* pcb = escalonador.obterProximoProcesso(outfile);
 
         outfile << "Processo " << pcb->pid
@@ -20,19 +20,19 @@ void Core::activate(ofstream& outfile) {
             outfile << "[Núcleo " << this_thread::get_id() << "] Erro: Nenhum processo disponível para execução.\n";
             return;
         }
-
+        
         // Restaurar o estado do processo
-        vector<int> pipelineState;
+        auto pipelineState = pipeline.getPipelineState();
         pcb->restaurarEstado(pipelineState, outfile);
 
         pcb->atualizarEstado(EXECUCAO, outfile);
-        outfile << "[Núcleo " << this_thread::get_id() << "] Iniciando execução do processo [PID: " << pcb->pid << "]\n";
+        outfile << "[Núcleo " << this_thread::get_id() << "] Iniciando execução do processo [PID: " << pcb->pid << "]";
         pcb->exibirPCB(outfile); // Imprime o estado inicial do PCB
 
         while (!pcb->quantumExpirado()) {
             // Valida se o PC está dentro do limite de instruções antes do fetch
             if (pcb->PC < pcb->getEnderecoBaseInstrucoes() || pcb->PC > pcb->getLimiteInstrucoes()) {
-                outfile << "[Núcleo " << this_thread::get_id() << "] Processo " << pcb->pid 
+                outfile << "\n[Núcleo " << this_thread::get_id() << "] Processo " << pcb->pid 
                           << " atingiu o limite de instruções (PC: " << pcb->PC 
                           << ", Base: " << pcb->getEnderecoBaseInstrucoes() 
                           << ", Limite: " << pcb->getLimiteInstrucoes() << ").\n";
@@ -65,13 +65,14 @@ void Core::activate(ofstream& outfile) {
         pcb->exibirPCB(outfile); // Exibe o estado final do PCB
 
         // Gerenciamento de estados
-        if (pcb->verificarEstado(FINALIZADO)) {
-            outfile << "[Núcleo " << this_thread::get_id() << "] Processo [PID: " << pcb->pid << "] finalizado.\n";
-        } else if (pcb->quantumExpirado()) {
+        if (pcb->quantumExpirado() && pcb->verificarEstado(EXECUCAO)) {
             pcb->atualizarEstado(PRONTO, outfile);
-            escalonador.adicionarProcesso(pcb);
-            outfile << "[Núcleo " << this_thread::get_id() << "] Quantum expirado para o processo [PID: " << pcb->pid << "]. Retornando à fila de prontos.\n";
-        } else if (pcb->verificarEstado(BLOQUEADO)) {
+            escalonador.adicionarProcesso(pcb, outfile);
+            outfile << "[Núcleo " << this_thread::get_id() << "] Quantum expirado para o processo [PID: " << pcb->pid 
+                    << "]. Retornando à fila de prontos.\n";
+        } else if (pcb->verificarEstado(FINALIZADO)) {
+            outfile << "[Núcleo " << this_thread::get_id() << "] Processo [PID: " << pcb->pid << "] finalizado.\n";
+        } else if (pcb-> verificarEstado(BLOQUEADO)) {
             outfile << "[Núcleo " << this_thread::get_id() << "] Processo [PID: " << pcb->pid << "] bloqueado.\n";
         }
     }
@@ -90,7 +91,6 @@ void Core::activate(ofstream& outfile) {
 void Core::run() {
     if(!filesystem::exists(OUTPUT_DIR)){
         filesystem::create_directory(OUTPUT_DIR);
-
     }
 
     ostringstream oss;
@@ -107,7 +107,7 @@ void Core::run() {
     }
 
     outfile << "[Núcleo] ID: " << this_thread::get_id() << "\n";
-    outfile << "===============================\n";
+    // outfile << "===============================\n";
 
     // cout << "\n" << "Executando o núcleo (Thread) com PC: " << PC << "\n\n";
     activate(outfile);

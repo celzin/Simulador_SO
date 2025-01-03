@@ -10,18 +10,20 @@ using namespace std;
 
 class Escalonador {
 private:
-    std::queue<PCB*> filaProntos;
-    std::queue<PCB*> filaBloqueados;
-    std::mutex mtx;
+    queue<PCB*> filaProntos;
+    queue<PCB*> filaBloqueados;
+    mutex mtx;
 
 public:
     Escalonador(); 
-    void adicionarProcesso(PCB* processo);  // Adiciona um processo à fila
+    void adicionarProcesso(PCB* processo, ofstream& outfile);  // Adiciona um processo à fila
     PCB* obterProximoProcesso(ofstream& outfile);  // Retorna o próximo processo a ser executado
 
     void bloquearProcesso(PCB* processo, ofstream& outfile);
     void desbloquearProcessos(ofstream& outfile); 
+    
     bool filaVazia() const;  
+    bool temProcessosProntos() const;
 };
 
 #endif
