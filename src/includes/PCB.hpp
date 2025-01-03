@@ -4,10 +4,12 @@
 #include "Registers.hpp"
 #include "Perifericos.hpp"
 #include "RAM.hpp"
+
 #include <vector>
 #include <unordered_map>
 #include <string>
 #include <iostream>
+#include <fstream>
 
 enum EstadoProcesso {
     PRONTO,
@@ -34,12 +36,12 @@ public:
     PCB(int id, int quantum, const Registers& regs, int enderecoBaseInstrucoes, int enderecoLimiteInstrucoes);
 
     void salvarEstado(const std::vector<int>& pipelineState);
-    void restaurarEstado(std::vector<int>& pipelineState);
+    void restaurarEstado(std::vector<int>& pipelineState, ofstream& outfile);
     
-    void decrementarQuantum();
+    void decrementarQuantum(ofstream& outfile);
     bool quantumExpirado() const;
 
-    void atualizarEstado(EstadoProcesso novoEstado); 
+    void atualizarEstado(EstadoProcesso novoEstado, ofstream& outfile); 
     bool verificarEstado(EstadoProcesso verEstado) const; 
 
     void alocarMemoria(RAM& ram, int enderecoBase, int limite); 
@@ -49,7 +51,7 @@ public:
     void associarRecurso(const std::string& nomeRecurso, bool alocado);
     bool verificarRecurso(const std::string& nomeRecurso) const;
 
-    void exibirPCB() const;
+    void exibirPCB(ofstream& outfile) const;
 
     int getEnderecoBaseInstrucoes() const;
     int getLimiteInstrucoes() const;

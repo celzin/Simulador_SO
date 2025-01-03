@@ -5,6 +5,7 @@
 #include <iostream>
 #include <vector>
 #include <utility> // Para std::pair
+#include <fstream>
 
 using namespace std;
 
@@ -17,7 +18,7 @@ public:
 
     int get(int index) const;
     void set(int index, int value);
-    void display() const;
+    void display(ofstream& outfile) const;
 
     void reset(); // Reinicializa todos os registradores
     const vector<pair<int, bool>>& getAllRegisters() const;

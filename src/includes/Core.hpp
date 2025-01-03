@@ -16,6 +16,10 @@
 
 #include <thread>
 #include <vector>
+#include <sstream>
+#include <filesystem>
+
+using namespace std;
 
 class Core {
 public:
@@ -31,12 +35,12 @@ public:
     Pipeline pipeline; 
 
     Core(RAM& ram, Disco& disco, Escalonador& escalonador);
-    void activate();  
+    void activate(ofstream& outfile);  
     void run();   
 
 private:
-    void validateMemoryAccess(PCB* processo, int endereco);
-    void gerenciarRecursos(PCB* processo);  
+    void validateMemoryAccess(PCB* processo, int endereco, ofstream& outfile);
+    void gerenciarRecursos(PCB* processo, ofstream& outfile);  
 };
 
 #endif

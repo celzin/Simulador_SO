@@ -12,6 +12,10 @@
 
 #include <vector>
 #include <iostream>
+#include <fstream>
+
+#define NUM_NUCLEOS 4
+#define OUTPUT_DIR "data/logs"
 
 using namespace std;
 
@@ -48,7 +52,6 @@ int main() {
     }
 
     // Criando múltiplos núcleos
-    const int NUM_NUCLEOS = 1;
     vector<Core> cores;
     for (int i = 0; i < NUM_NUCLEOS; ++i) {
         cores.push_back(Core(ram, disco, escalonador)); // Criando núcleos
@@ -65,13 +68,13 @@ int main() {
         th.join(); // Espera todas as threads terminarem
     }
 
-    // Exibindo o estado final da RAM
-    cout << "\n===== Estado Final da RAM =====\n";
-    ram.display();
+    // // Exibindo o estado final da RAM
+    // cout << "\n===== Estado Final da RAM =====\n";
+    // ram.display();
 
-    // Exibindo o estado final do Disco
-    cout << "\n===== Estado Final do Disco =====\n";
-    disco.display();
+    // // Exibindo o estado final do Disco
+    // cout << "\n===== Estado Final do Disco =====\n";
+    // disco.display();
 
     // Liberando memória dos processos
     for (auto& pcb : pcbs) {

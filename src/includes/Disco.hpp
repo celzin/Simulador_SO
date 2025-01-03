@@ -25,7 +25,7 @@ public:
     Disco(); 
 
     void write(int valor); 
-    void display() const;  
+    void display(ofstream& outfile) const;  
     void setRegistersFromFile(Registers& regs, const string& regsFilename);
     int loadInstructionsFromFile(RAM& ram, const string& instrFilename, int enderecoBase);
     vector<string> listInstructionsFile(const string& dir);

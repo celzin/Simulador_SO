@@ -5,6 +5,8 @@
 #include <string>
 #include <iostream>
 
+#include <fstream>
+
 using namespace std;
 
 class Perifericos {
@@ -17,7 +19,7 @@ public:
     void estadoPeriferico(const std::string& nomeRecurso, bool estado); 
     bool verificarPeriferico(const std::string& nomeRecurso) const;     
 
-    void exibirPerifericos() const; 
+    void exibirPerifericos(ofstream& outfile) const; 
 };
 
 #endif

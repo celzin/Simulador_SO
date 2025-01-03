@@ -22,15 +22,15 @@ void Disco::write(int valor) {
     }
 }
 
-void Disco::display() const {
+void Disco::display(ofstream& outfile) const {
     for (int i = 0; i < LINHAS; ++i) {
         for (int j = 0; j < COLUNAS; ++j) {
             int valor = memoria[i][j].first;
             bool preenchido = memoria[i][j].second;
 
-            cout << (preenchido ? valor : 0) << " ";
+            outfile << (preenchido ? valor : 0) << " ";
         }
-        cout << endl;
+        outfile << endl;
     }
 }
 

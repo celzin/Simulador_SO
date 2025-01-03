@@ -1,91 +1,132 @@
 #include "../includes/Core.hpp"
 
+#define OUTPUT_DIR "data/logs"
+
 Core::Core(RAM& ram, Disco& disco, Escalonador& escalonador) 
     : ram(ram), disco(disco), PC(0), Clock(0), escalonador(escalonador) {}
 
-void Core::activate() {
+void Core::activate(ofstream& outfile) {
     while (!escalonador.filaVazia()) {
-        PCB* pcb = escalonador.obterProximoProcesso();
+        PCB* pcb = escalonador.obterProximoProcesso(outfile);
+
+        outfile << "Processo " << pcb->pid
+                  << ": Base Instruções = " << pcb->enderecoBaseInstrucoes
+                  << ", Limite Instruções = " << pcb->enderecoLimiteInstrucoes
+                  << ", PC Inicial = " << pcb->PC
+                  << ", Quantum = " << pcb->quantumProcesso
+                  << endl;
 
         if (pcb == nullptr) {
-            std::cerr << "[Núcleo " << std::this_thread::get_id() << "] Erro: Nenhum processo disponível para execução.\n";
+            outfile << "[Núcleo " << this_thread::get_id() << "] Erro: Nenhum processo disponível para execução.\n";
             return;
         }
 
         // Restaurar o estado do processo
-        std::vector<int> pipelineState;
-        pcb->restaurarEstado(pipelineState);
+        vector<int> pipelineState;
+        pcb->restaurarEstado(pipelineState, outfile);
 
-        pcb->atualizarEstado(EXECUCAO);
-        std::cout << "[Núcleo " << std::this_thread::get_id() << "] Iniciando execução do processo [PID: " << pcb->pid << "]\n";
-        pcb->exibirPCB(); // Imprime o estado inicial do PCB
+        pcb->atualizarEstado(EXECUCAO, outfile);
+        outfile << "[Núcleo " << this_thread::get_id() << "] Iniciando execução do processo [PID: " << pcb->pid << "]\n";
+        pcb->exibirPCB(outfile); // Imprime o estado inicial do PCB
 
         while (!pcb->quantumExpirado()) {
             // Valida se o PC está dentro do limite de instruções antes do fetch
             if (pcb->PC < pcb->getEnderecoBaseInstrucoes() || pcb->PC > pcb->getLimiteInstrucoes()) {
-                std::cout << "[Núcleo " << std::this_thread::get_id() << "] Processo " << pcb->pid 
+                outfile << "[Núcleo " << this_thread::get_id() << "] Processo " << pcb->pid 
                           << " atingiu o limite de instruções (PC: " << pcb->PC 
                           << ", Base: " << pcb->getEnderecoBaseInstrucoes() 
                           << ", Limite: " << pcb->getLimiteInstrucoes() << ").\n";
-                pcb->atualizarEstado(FINALIZADO);
+                pcb->atualizarEstado(FINALIZADO, outfile);
                 break;
             }
 
             // Busca a próxima instrução
             Instruction instr = pipeline.InstructionFetch(ram, pcb->PC, pcb);
             if (instr.op == NOP) {
-                std::cerr << "[Núcleo " << std::this_thread::get_id() << "] Instrução inválida no PC: " << pcb->PC << ". Encerrando execução.\n";
-                pcb->atualizarEstado(FINALIZADO);
+                outfile << "[Núcleo " << this_thread::get_id() << "] Instrução inválida no PC: " << pcb->PC << ". Encerrando execução.\n";
+                pcb->atualizarEstado(FINALIZADO, outfile);
                 break;
             }
 
             // Executa a instrução
-            uc.executarInstrucao(instr, pcb->registradores, ram, pcb->PC, disco, Clock, *pcb);
+            uc.executarInstrucao(instr, pcb->registradores, ram, pcb->PC, disco, Clock, *pcb, outfile);
+            cout << "[Pipeline] Executando instrução: Opcode " << instr.op << "\n";
 
             // Incrementa o PC
             pcb->PC += 1; // Incremento em unidades para acompanhar a RAM
 
             // Decrementa o quantum
-            pcb->decrementarQuantum();
+            pcb->decrementarQuantum(outfile);
         }
 
         // Salvar o estado do processo
         pcb->salvarEstado(pipeline.getPipelineState());
-        std::cout << "[Núcleo " << std::this_thread::get_id() << "] Finalizando execução do processo [PID: " << pcb->pid << "]:\n";
-        pcb->exibirPCB(); // Exibe o estado final do PCB
+        outfile << "[Núcleo " << this_thread::get_id() << "] Finalizando execução do processo [PID: " << pcb->pid << "]:\n";
+        pcb->exibirPCB(outfile); // Exibe o estado final do PCB
 
         // Gerenciamento de estados
         if (pcb->verificarEstado(FINALIZADO)) {
-            std::cout << "[Núcleo " << std::this_thread::get_id() << "] Processo [PID: " << pcb->pid << "] finalizado.\n";
+            outfile << "[Núcleo " << this_thread::get_id() << "] Processo [PID: " << pcb->pid << "] finalizado.\n";
         } else if (pcb->quantumExpirado()) {
-            pcb->atualizarEstado(PRONTO);
+            pcb->atualizarEstado(PRONTO, outfile);
             escalonador.adicionarProcesso(pcb);
-            std::cout << "[Núcleo " << std::this_thread::get_id() << "] Quantum expirado para o processo [PID: " << pcb->pid << "]. Retornando à fila de prontos.\n";
+            outfile << "[Núcleo " << this_thread::get_id() << "] Quantum expirado para o processo [PID: " << pcb->pid << "]. Retornando à fila de prontos.\n";
         } else if (pcb->verificarEstado(BLOQUEADO)) {
-            std::cout << "[Núcleo " << std::this_thread::get_id() << "] Processo [PID: " << pcb->pid << "] bloqueado.\n";
+            outfile << "[Núcleo " << this_thread::get_id() << "] Processo [PID: " << pcb->pid << "] bloqueado.\n";
         }
     }
+
+    // Exibindo o estado final da RAM
+    outfile << "\n===== Estado Final da RAM =====\n";
+    ram.display(outfile);
+
+    // Exibindo o estado final do Disco
+    outfile << "\n===== Estado Final do Disco =====\n";
+    disco.display(outfile);
+
 }
 
 
 void Core::run() {
-    std::cout << "\n" << "Executando o núcleo (Thread) com PC: " << PC << "\n\n";
-    activate();
+    if(!filesystem::exists(OUTPUT_DIR)){
+        filesystem::create_directory(OUTPUT_DIR);
+
+    }
+
+    ostringstream oss;
+    oss << this_thread::get_id();
+    string this_thread_id_str = oss.str();
+
+    // Nome do output para este núcleo
+    string filename = string(OUTPUT_DIR) + "/output_nucleo_" + this_thread_id_str + ".txt";
+    ofstream outfile(filename, ios::out);
+
+    if(!outfile.is_open()){
+        cerr << "[Núcleo " << this_thread::get_id() << "] Erro ao criar arquivo de saída.\n";
+        return;
+    }
+
+    outfile << "[Núcleo] ID: " << this_thread::get_id() << "\n";
+    outfile << "===============================\n";
+
+    // cout << "\n" << "Executando o núcleo (Thread) com PC: " << PC << "\n\n";
+    activate(outfile);
+    outfile.close();
 }
 
-void Core::validateMemoryAccess(PCB* processo, int endereco) {
+void Core::validateMemoryAccess(PCB* processo, int endereco, ofstream& outfile) {
     if (!processo->verificarAcessoMemoria(endereco) || ram.isReserved(endereco)) {
-        std::cerr << "[Erro] Acesso inválido à memória no endereço " << endereco << " pelo processo " << processo->pid << "\n";
-        processo->atualizarEstado(BLOQUEADO); // Bloqueia o processo caso o acesso seja inválido
+        outfile << "[Erro] Acesso inválido à memória no endereço " << endereco << " pelo processo " << processo->pid << "\n";
+        processo->atualizarEstado(BLOQUEADO, outfile); // Bloqueia o processo caso o acesso seja inválido
     }
 }
 
-void Core::gerenciarRecursos(PCB* processo) {
+void Core::gerenciarRecursos(PCB* processo, ofstream& outfile) {
     // Simula uma verificação de recursos
-    std::string recursoNecessario = "teclado"; // Exemplo de recurso
+    string recursoNecessario = "teclado"; // Exemplo de recurso
     if (!processo->verificarRecurso(recursoNecessario)) {
         processo->associarRecurso(recursoNecessario, true); // Aloca o recurso
     } else {
-        processo->atualizarEstado(BLOQUEADO); // Bloqueia o processo caso o recurso esteja indisponível
+        processo->atualizarEstado(BLOQUEADO, outfile); // Bloqueia o processo caso o recurso esteja indisponível
     }
 }

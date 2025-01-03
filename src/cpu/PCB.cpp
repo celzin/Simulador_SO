@@ -5,9 +5,9 @@
 PCB::PCB(int id, int quantum, const Registers& regs, int enderecoBase, int limite)
     : pid(id), estado(PRONTO), PC(0), quantumProcesso(quantum), quantumRestante(quantum), registradores(regs), enderecoBaseInstrucoes(enderecoBase), enderecoLimiteInstrucoes(limite) {}
 
-void PCB::atualizarEstado(EstadoProcesso novoEstado) {
+void PCB::atualizarEstado(EstadoProcesso novoEstado, ofstream& outfile) {
     estado = novoEstado;
-    std::cout << "[PCB] Processo " << pid << " alterado para estado: "
+    outfile << "[PCB] Processo " << pid << " alterado para estado: "
               << (novoEstado == PRONTO ? "PRONTO" : novoEstado == EXECUCAO ? "EXECUCAO" : novoEstado == BLOQUEADO ? "BLOQUEADO" : "FINALIZADO") << std::endl;
 }
 
@@ -29,7 +29,7 @@ void PCB::salvarEstado(const std::vector<int>& pipelineState) {
     std::cout << "Estado completo do processo " << pid << " salvo no PCB.\n";
 }
 
-void PCB::restaurarEstado(std::vector<int>& pipelineState) {
+void PCB::restaurarEstado(std::vector<int>& pipelineState, ofstream& outfile) {
     // Restaura o estado do pipeline
     pipelineState = estadoPipeline;
 
@@ -40,10 +40,10 @@ void PCB::restaurarEstado(std::vector<int>& pipelineState) {
     // Restaura o valor do PC
     this->PC = PC;
 
-    std::cout << "Estado completo do processo " << pid << " restaurado do PCB.\n";
+    cout << "Estado completo do processo " << pid << " restaurado do PCB.\n";
 }
 
-void PCB::decrementarQuantum() {
+void PCB::decrementarQuantum(ofstream& outfile) {
     if (quantumRestante > 0) {
         quantumRestante--;
         cout << "[Quantum] Processo " << pid << ", Quantum restante: " << quantumRestante << endl;
@@ -96,36 +96,36 @@ bool PCB::verificarRecurso(const std::string& nomeRecurso) const {
     return recursos.verificarPeriferico(nomeRecurso);
 }
 
-void PCB::exibirPCB() const {
-    std::cout << "\n===============================" << "\n"
+void PCB::exibirPCB(ofstream& outfile) const {
+    outfile << "\n===============================" << "\n"
               << "[PCB] Processo ID: " << pid << "\n"
               << "Estado: " << (estado == PRONTO ? "PRONTO" : estado == EXECUCAO ? "EXECUCAO" : estado == BLOQUEADO ? "BLOQUEADO" : "FINALIZADO") << "\n"
               << "Quantum Total: " << quantumProcesso << ", Quantum Restante: " << quantumRestante << "\n"
               << "PC: " << PC << "\n"
               << "Registradores:\n";
-    registradores.display();
+    registradores.display(outfile);
 
-    std::cout << "Memória Alocada:\n";
+    outfile << "Memória Alocada:\n";
     if (!memoriaAlocada.empty()) {
-        std::cout << "  Base: " << memoriaAlocada[0] << ", Limite: " << memoriaAlocada[1] << "\n";
+        outfile << "  Base: " << memoriaAlocada[0] << ", Limite: " << memoriaAlocada[1] << "\n";
     } else {
-        std::cout << "  Nenhuma memória alocada\n";
+        outfile << "  Nenhuma memória alocada\n";
     }
 
-    std::cout << "Estado do Pipeline: ";
+    outfile << "Estado do Pipeline: ";
     if (!estadoPipeline.empty()) {
         for (const auto& val : estadoPipeline) {
-            std::cout << val << " ";
+            outfile << val << " ";
         }
-        std::cout << "\n";
+        outfile << "\n";
     } else {
-        std::cout << "  Nenhum estado salvo\n";
+        outfile << "  Nenhum estado salvo\n";
     }
 
-    std::cout << "Recursos Associados:\n";
-    recursos.exibirPerifericos();
+    outfile << "Recursos Associados:\n";
+    recursos.exibirPerifericos(outfile);
 
-    std::cout << "===============================\n\n";
+    outfile << "===============================\n\n";
 }
 
 int PCB::getEnderecoBaseInstrucoes() const {

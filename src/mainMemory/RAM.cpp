@@ -45,9 +45,9 @@ bool RAM::isReserved(int endereco) const {
     return memoria[endereco] != 0; // Qualquer valor diferente de 0 indica que está reservado
 }
 
-void RAM::display() const {
+void RAM::display(ofstream& outfile) const {
     for (int i = 0; i < tamanho; i++) {
-        std::cout << "Endereço " << i << " -> " << memoria[i] << std::endl;
+        outfile << "Endereço " << i << " -> " << memoria[i] << endl;
     }
 }
 

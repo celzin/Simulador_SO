@@ -25,7 +25,7 @@ public:
     Instruction fetchInstruction(int endereco) const;
 
     bool isReserved(int endereco) const;
-    void display() const;
+    void display(ofstream& outfile) const;
     void displayI() const;
 };
 

@@ -20,8 +20,8 @@ bool Perifericos::verificarPeriferico(const std::string& nomeRecurso) const {
     return it != perifericos.end() && it->second;
 }
 
-void Perifericos::exibirPerifericos() const {
+void Perifericos::exibirPerifericos(ofstream& outfile) const {
     for (const auto& [recurso, estado] : perifericos) {
-        std::cout << "- " << recurso << ": " << (estado ? "Em uso" : "Disponível") << std::endl;
+        outfile << "- " << recurso << ": " << (estado ? "Em uso" : "Disponível") << std::endl;
     }
 }

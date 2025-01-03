@@ -24,19 +24,19 @@ vector<PCB*> ProcessManager::createPCBs(Disco& disco, RAM& ram, Registers& regs,
         int quantumRandom = distrib(gen);
 
         // Cria o PCB associado à faixa de memória de instruções
-        PCB* novoPCB = new PCB(i + 1, 50, regs, enderecoAtual, enderecoAtual + quantidadeInstrucoes - 1);
+        PCB* novoPCB = new PCB(i + 1, quantumRandom, regs, enderecoAtual, enderecoAtual + quantidadeInstrucoes - 1);
 
         // Configura o PC inicial do processo
         novoPCB->PC = enderecoAtual;
 
         pcbs.push_back(novoPCB);
 
-        cout << "Processo " << i + 1
-                  << ": Base Instruções = " << enderecoAtual
-                  << ", Limite Instruções = " << enderecoAtual + quantidadeInstrucoes - 1
-                  << ", PC Inicial = " << novoPCB->PC 
-                  << ", Quantum = " << quantumRandom
-                  << endl;
+        // cout << "Processo " << i + 1
+        //           << ": Base Instruções = " << enderecoAtual
+        //           << ", Limite Instruções = " << enderecoAtual + quantidadeInstrucoes - 1
+        //           << ", PC Inicial = " << novoPCB->PC 
+        //           << ", Quantum = " << quantumRandom
+        //           << endl;
 
         // Atualiza o endereço base para o próximo conjunto de instruções
         enderecoAtual += quantidadeInstrucoes;
