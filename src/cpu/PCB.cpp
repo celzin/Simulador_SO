@@ -54,6 +54,11 @@ bool PCB::quantumExpirado() const {
     return quantumRestante <= 0;
 }
 
+void PCB::resetarQuantum(ofstream& outfile) {
+    quantumRestante = quantumProcesso;
+    outfile << "[Quantum] Quantum do processo " << pid << " foi reiniciado para " << quantumProcesso << "\n";
+}
+
 // Gerenciamento de memoria
 void PCB::alocarMemoria(RAM& ram, int enderecoBase, int limite) {
     // Verifica se a memória já está alocada

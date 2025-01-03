@@ -40,6 +40,7 @@ public:
     
     void decrementarQuantum(ofstream& outfile);
     bool quantumExpirado() const;
+    void resetarQuantum(ofstream& outfile);
 
     void atualizarEstado(EstadoProcesso novoEstado, ofstream& outfile); 
     bool verificarEstado(EstadoProcesso verEstado) const; 

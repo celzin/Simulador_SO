@@ -31,11 +31,12 @@ void Core::activate(ofstream& outfile) {
 
         while (!pcb->quantumExpirado()) {
             // Valida se o PC está dentro do limite de instruções antes do fetch
-            if (pcb->PC < pcb->getEnderecoBaseInstrucoes() || pcb->PC > pcb->getLimiteInstrucoes()) {
+            if (pcb->PC >= pcb->getLimiteInstrucoes()) {
                 outfile << "\n[Núcleo " << this_thread::get_id() << "] Processo " << pcb->pid 
                           << " atingiu o limite de instruções (PC: " << pcb->PC 
                           << ", Base: " << pcb->getEnderecoBaseInstrucoes() 
-                          << ", Limite: " << pcb->getLimiteInstrucoes() << ").\n";
+                          << ", Limite: " << pcb->getLimiteInstrucoes()
+                          << "), Finalizando.\n";
                 pcb->atualizarEstado(FINALIZADO, outfile);
                 break;
             }
@@ -50,7 +51,7 @@ void Core::activate(ofstream& outfile) {
 
             // Executa a instrução
             uc.executarInstrucao(instr, pcb->registradores, ram, pcb->PC, disco, Clock, *pcb, outfile);
-            cout << "[Pipeline] Executando instrução: Opcode " << instr.op << "\n";
+            // cout << "[Pipeline] Executando instrução: Opcode " << instr.op << "\n";
 
             // Incrementa o PC
             pcb->PC += 1; // Incremento em unidades para acompanhar a RAM
@@ -65,13 +66,14 @@ void Core::activate(ofstream& outfile) {
         pcb->exibirPCB(outfile); // Exibe o estado final do PCB
 
         // Gerenciamento de estados
-        if (pcb->quantumExpirado() && pcb->verificarEstado(EXECUCAO)) {
+        if (pcb->verificarEstado(FINALIZADO)) {
+            outfile << "[Núcleo " << this_thread::get_id() << "] Processo [PID: " << pcb->pid << "] finalizado.\n";
+        } else if (pcb->quantumExpirado()) {
+            pcb->resetarQuantum(outfile);
             pcb->atualizarEstado(PRONTO, outfile);
             escalonador.adicionarProcesso(pcb, outfile);
             outfile << "[Núcleo " << this_thread::get_id() << "] Quantum expirado para o processo [PID: " << pcb->pid 
                     << "]. Retornando à fila de prontos.\n";
-        } else if (pcb->verificarEstado(FINALIZADO)) {
-            outfile << "[Núcleo " << this_thread::get_id() << "] Processo [PID: " << pcb->pid << "] finalizado.\n";
         } else if (pcb-> verificarEstado(BLOQUEADO)) {
             outfile << "[Núcleo " << this_thread::get_id() << "] Processo [PID: " << pcb->pid << "] bloqueado.\n";
         }
