@@ -46,7 +46,7 @@ void PCB::restaurarEstado(std::vector<int>& pipelineState, ofstream& outfile) {
 void PCB::decrementarQuantum(ofstream& outfile) {
     if (quantumRestante > 0) {
         quantumRestante--;
-        outfile << "[Quantum] Processo " << pid << ", Quantum restante: " << quantumRestante << endl;
+        // outfile << "[Quantum] Processo " << pid << ", Quantum restante: " << quantumRestante << endl;
     }
 }
 
@@ -102,7 +102,7 @@ bool PCB::verificarRecurso(const std::string& nomeRecurso) const {
 }
 
 void PCB::exibirPCB(ofstream& outfile) const {
-    outfile << "\n===============================" << "\n"
+    outfile << "\n\n===============================" << "\n"
               << "[PCB] Processo ID: " << pid << "\n"
               << "Estado: " << (estado == PRONTO ? "PRONTO" : estado == EXECUCAO ? "EXECUCAO" : estado == BLOQUEADO ? "BLOQUEADO" : "FINALIZADO") << "\n"
               << "Quantum Total: " << quantumProcesso << ", Quantum Restante: " << quantumRestante << "\n"

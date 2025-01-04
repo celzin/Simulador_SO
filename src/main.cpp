@@ -74,13 +74,13 @@ int main() {
         th.join(); // Espera todas as threads terminarem
     }
 
-    // // Exibindo o estado final da RAM
-    // cout << "\n===== Estado Final da RAM =====\n";
-    // ram.display();
+    // Exibindo o estado final da RAM
+    globalLog << "\n===== Estado Final da RAM =====\n";
+    ram.display(globalLog);
 
-    // // Exibindo o estado final do Disco
-    // cout << "\n===== Estado Final do Disco =====\n";
-    // disco.display();
+    // Exibindo o estado final do Disco
+    globalLog << "\n===== Estado Final do Disco =====\n";
+    disco.display(globalLog);
 
     // Liberando memória dos processos
     for (auto& pcb : pcbs) {

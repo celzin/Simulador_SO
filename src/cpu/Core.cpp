@@ -36,7 +36,8 @@ void Core::activate(ofstream& outfile) {
                           << " atingiu o limite de instruções (PC: " << pcb->PC 
                           << ", Base: " << pcb->getEnderecoBaseInstrucoes() 
                           << ", Limite: " << pcb->getLimiteInstrucoes()
-                          << "), Finalizando.\n";
+                          << ")\n";
+                outfile << "Finalizando...\n\n";
                 pcb->atualizarEstado(FINALIZADO, outfile);
                 break;
             }
@@ -62,12 +63,13 @@ void Core::activate(ofstream& outfile) {
 
         // Salvar o estado do processo
         pcb->salvarEstado(pipeline.getPipelineState());
-        outfile << "[Núcleo " << this_thread::get_id() << "] Finalizando execução do processo [PID: " << pcb->pid << "]:\n";
+        outfile << "[Núcleo " << this_thread::get_id() << "] Finalizando execução do processo [PID: " << pcb->pid << "].\n";
         pcb->exibirPCB(outfile); // Exibe o estado final do PCB
 
         // Gerenciamento de estados
         if (pcb->verificarEstado(FINALIZADO)) {
             outfile << "[Núcleo " << this_thread::get_id() << "] Processo [PID: " << pcb->pid << "] finalizado.\n";
+            outfile << "************************************************************************************************************************\n";
         } else if (pcb->quantumExpirado()) {
             pcb->resetarQuantum(outfile);
             pcb->atualizarEstado(PRONTO, outfile);
@@ -79,13 +81,13 @@ void Core::activate(ofstream& outfile) {
         }
     }
 
-    // Exibindo o estado final da RAM
-    outfile << "\n===== Estado Final da RAM =====\n";
-    ram.display(outfile);
+    // // Exibindo o estado final da RAM
+    // outfile << "\n===== Estado Final da RAM =====\n";
+    // ram.display(outfile);
 
-    // Exibindo o estado final do Disco
-    outfile << "\n===== Estado Final do Disco =====\n";
-    disco.display(outfile);
+    // // Exibindo o estado final do Disco
+    // outfile << "\n===== Estado Final do Disco =====\n";
+    // disco.display(outfile);
 
 }
 

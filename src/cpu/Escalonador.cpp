@@ -7,7 +7,7 @@ PCB* Escalonador::obterProximoProcesso(ofstream& outfile) {
     if (!filaVazia()) {
         PCB* processo = filaProntos.front();
         filaProntos.pop();
-        outfile << "===============================\n";
+        outfile << "\n************************************************************************************************************************\n";
         outfile << "[Escalonador] Retirando o processo " << processo->pid << " da fila de prontos.\n";
         return processo;  // Retorna o primeiro processo da fila
     }
