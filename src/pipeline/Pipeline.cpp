@@ -12,7 +12,7 @@ std::vector<int> Pipeline::getPipelineState() const {
 }
 
 void Pipeline::PipelineProcess(const Instruction& instr, Registers& regs, RAM& ram, int& PC, Disco& disco, int& Clock) {
-        cout << "[Pipeline] Executando instrução: Opcode " << instr.op << endl;
+        // cout << "[Pipeline] Executando instrução: Opcode " << instr.op << endl;
 
         // Instruction instr = InstructionFetch(ram, PC / 4);
         // Clock++;
@@ -52,10 +52,10 @@ Instruction Pipeline::InstructionFetch(RAM& ram, int endereco, PCB* pcb) {
         return Instruction(ADD, 0, 0, 0); // Instrução "neutra" ou de erro
     }
     
-    cout << "[Fetch] Processo " << pcb->pid 
-         << ", Endereço: " << endereco 
-         << " (Base: " << pcb->getEnderecoBaseInstrucoes() 
-         << ", Limite: " << pcb->getLimiteInstrucoes() << ")\n";
+    // cout << "[Fetch] Processo " << pcb->pid 
+    //      << ", Endereço: " << endereco 
+    //      << " (Base: " << pcb->getEnderecoBaseInstrucoes() 
+    //      << ", Limite: " << pcb->getLimiteInstrucoes() << ")\n";
     return ram.instruction_memory[endereco];
 }
 

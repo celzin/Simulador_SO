@@ -26,7 +26,7 @@ void PCB::salvarEstado(const std::vector<int>& pipelineState) {
     // Salva o valor atual do PC
     this->PC = PC;
 
-    std::cout << "Estado completo do processo " << pid << " salvo no PCB.\n";
+    // std::cout << "Estado completo do processo " << pid << " salvo no PCB.\n";
 }
 
 void PCB::restaurarEstado(std::vector<int>& pipelineState, ofstream& outfile) {
@@ -40,7 +40,7 @@ void PCB::restaurarEstado(std::vector<int>& pipelineState, ofstream& outfile) {
     // Restaura o valor do PC
     this->PC = PC;
 
-    cout << "Estado completo do processo " << pid << " restaurado do PCB.\n";
+    // cout << "Estado completo do processo " << pid << " restaurado do PCB.\n";
 }
 
 void PCB::decrementarQuantum(ofstream& outfile) {
@@ -73,7 +73,7 @@ void PCB::alocarMemoria(RAM& ram, int enderecoBase, int limite) {
         ram.write(i, 0); // Inicializa os endereços na RAM
     }
     memoriaAlocada = {enderecoBase, limite};
-    std::cout << "Memória alocada ao processo " << pid << ": Base=" << enderecoBase << ", Limite=" << limite << "\n";
+    // std::cout << "Memória alocada ao processo " << pid << ": Base=" << enderecoBase << ", Limite=" << limite << "\n";
 }
 
 bool PCB::verificarAcessoMemoria(int endereco) const {
@@ -87,7 +87,7 @@ void PCB::liberarMemoria(RAM& ram) {
             ram.write(i, 0); // Libera os endereços na RAM
         }
         memoriaAlocada.clear();
-        std::cout << "Memória liberada para o processo " << pid << "\n";
+        // std::cout << "Memória liberada para o processo " << pid << "\n";
     }
 }
 

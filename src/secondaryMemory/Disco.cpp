@@ -10,7 +10,7 @@ void Disco::write(int valor) {
         for (int i = 0; i < LINHAS; ++i) {
             if (!memoria[i][j].second) {  // Verifica se a célula está livre
                 memoria[i][j] = {valor, true};  // Insere o valor
-                cout << "Valor " << valor << " inserido em [" << i << "][" << j << "]" << endl;
+                // cout << "Valor " << valor << " inserido em [" << i << "][" << j << "]" << endl;
                 inserido = true;
                 return;
             }

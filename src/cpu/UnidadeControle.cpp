@@ -12,7 +12,7 @@ void UnidadeControle::executarInstrucao(const Instruction& instr, Registers& reg
     std::vector<int> pipelineState;
     pcb.restaurarEstado(pipelineState, outfile); // Restaura o estado completo do processo
     PC = pcb.PC; // Atualiza o PC do processo
-    std::cout << "Executando processo " << pcb.pid << " no PC: " << PC << "\n";
+    // std::cout << "Executando processo " << pcb.pid << " no PC: " << PC << "\n";
     pcb.decrementarQuantum(outfile);
     // Executa o pipeline do processo
     pipeline.PipelineProcess(instr, regs, ram, PC, disco, Clock);
