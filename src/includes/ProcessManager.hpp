@@ -1,6 +1,7 @@
 #ifndef PROCESS_MANAGER_HPP
 #define PROCESS_MANAGER_HPP
 
+#include "Bootloader.hpp"
 #include "RAM.hpp"
 #include "Disco.hpp"
 #include "PCB.hpp"

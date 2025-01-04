@@ -1,8 +1,5 @@
 #include "../includes/ProcessManager.hpp"
 
-#define QUANTUM_MIN 20
-#define QUANTUM_MAX 50
-
 vector<PCB*> ProcessManager::createPCBs(Disco& disco, RAM& ram, Registers& regs, const vector<string>& arquivosInstrucoes) {
     vector<PCB*> pcbs;
     int enderecoAtual = 0; // Endereço inicial na RAM
@@ -10,7 +7,7 @@ vector<PCB*> ProcessManager::createPCBs(Disco& disco, RAM& ram, Registers& regs,
     // Configurando gerador aleatório de números para o quantum
     random_device rd;
     mt19937 gen(rd());
-    uniform_int_distribution<> distrib(QUANTUM_MIN, QUANTUM_MAX);
+    uniform_int_distribution<> distrib(Bootloader::QUANTUM_PROCESS_MIN, Bootloader::QUANTUM_PROCESS_MAX);
 
     // Criando pcbs a partir da lista de arquivos de instruções e carregando as instruções na RAM
     for (int i = 0; i < arquivosInstrucoes.size(); ++i) {
