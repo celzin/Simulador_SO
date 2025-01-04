@@ -46,7 +46,7 @@ void PCB::restaurarEstado(std::vector<int>& pipelineState, ofstream& outfile) {
 void PCB::decrementarQuantum(ofstream& outfile) {
     if (quantumRestante > 0) {
         quantumRestante--;
-        // outfile << "[Quantum] Processo " << pid << ", Quantum restante: " << quantumRestante << endl;
+        outfile << "[Quantum] Processo " << pid << ", Quantum restante: " << quantumRestante << endl;
     }
 }
 
