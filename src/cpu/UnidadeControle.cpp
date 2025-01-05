@@ -1,6 +1,7 @@
 #include "../includes/UnidadeControle.hpp"
 
-void UnidadeControle::executarInstrucao(const Instruction& instr, Registers& regs, RAM& ram, int& PC, Disco& disco, int& Clock, PCB& pcb, ofstream& outfile) {
+void UnidadeControle::executarInstrucao(const Instruction &instr, Registers &regs, RAM &ram, int &PC, Disco &disco, int &Clock, PCB &pcb, ofstream &outfile)
+{
     vector<int> pipelineState;                                    // Pipeline inicializado para restaurar
     pcb.restaurarEstado(pipelineState, outfile);                  // Restaura o estado completo do processo
     PC = pcb.PC;                                                  // Atualiza o PC do processo

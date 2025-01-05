@@ -9,17 +9,18 @@
 
 using namespace std;
 
-class Perifericos {
+class Perifericos
+{
 private:
-    std::unordered_map<std::string, bool> perifericos; 
+    std::unordered_map<std::string, bool> perifericos;
 
 public:
     Perifericos();
 
-    void estadoPeriferico(const std::string& nomeRecurso, bool estado); 
-    bool verificarPeriferico(const std::string& nomeRecurso) const;     
+    void estadoPeriferico(const std::string &nomeRecurso, bool estado);
+    bool verificarPeriferico(const std::string &nomeRecurso) const;
 
-    void exibirPerifericos(ofstream& outfile) const; 
+    void exibirPerifericos(ofstream &outfile) const;
 };
 
 #endif

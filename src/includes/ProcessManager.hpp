@@ -13,10 +13,11 @@
 
 using namespace std;
 
-class ProcessManager {
+class ProcessManager
+{
 public:
     // Criar pcbs a partir de arquivos de instruções
-    static vector<PCB*> createPCBs(Disco& disco, RAM& ram, Registers& regs, const vector<string>& arquivosInstrucoes);
+    static vector<PCB *> createPCBs(Disco &disco, RAM &ram, Registers &regs, const vector<string> &arquivosInstrucoes);
 };
 
 #endif

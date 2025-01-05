@@ -17,26 +17,27 @@
 
 using namespace std;
 
-class Core {
+class Core
+{
 public:
-    int PC;                         
-    int Clock;         
+    int PC;
+    int Clock;
     int instructionAddress;
 
-    Registers regs;                
-    UnidadeControle uc;           
-    RAM& ram;               
-    Disco& disco;        
-    Escalonador& escalonador;    
-    Pipeline pipeline; 
+    Registers regs;
+    UnidadeControle uc;
+    RAM &ram;
+    Disco &disco;
+    Escalonador &escalonador;
+    Pipeline pipeline;
 
-    Core(RAM& ram, Disco& disco, Escalonador& escalonador);
-    void activate(ofstream& outfile);  
-    void run();   
+    Core(RAM &ram, Disco &disco, Escalonador &escalonador);
+    void activate(ofstream &outfile);
+    void run();
 
 private:
-    void validateMemoryAccess(PCB* processo, int endereco, ofstream& outfile);
-    void gerenciarRecursos(PCB* processo, ofstream& outfile);  
+    void validateMemoryAccess(PCB *processo, int endereco, ofstream &outfile);
+    void gerenciarRecursos(PCB *processo, ofstream &outfile);
 };
 
 #endif

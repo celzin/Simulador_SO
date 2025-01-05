@@ -5,11 +5,12 @@
 #include <vector>
 #include "Instruction.hpp"
 #include "InstructionDecode.hpp"
-#include <mutex>  
+#include <mutex>
 
-class RAM {
+class RAM
+{
 private:
-    std::mutex mtx;  
+    std::mutex mtx;
 
 public:
     std::vector<int> memoria;
@@ -21,11 +22,11 @@ public:
     void write(int endereco, int valor);
     int read(int endereco);
 
-    void writeInstruction(int endereco, const Instruction& instr);
+    void writeInstruction(int endereco, const Instruction &instr);
     Instruction fetchInstruction(int endereco) const;
 
     bool isReserved(int endereco) const;
-    void display(ofstream& outfile) const;
+    void display(ofstream &outfile) const;
     void displayI() const;
 };
 

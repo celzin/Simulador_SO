@@ -12,12 +12,13 @@
 
 using namespace std;
 
-class UnidadeControle {
+class UnidadeControle
+{
 private:
     Pipeline pipeline;
 
 public:
-    void executarInstrucao(const Instruction& instr, Registers& regs, RAM& ram, int& PC, Disco& disco, int& Clock, PCB& pcb, ofstream& outfile);
+    void executarInstrucao(const Instruction &instr, Registers &regs, RAM &ram, int &PC, Disco &disco, int &Clock, PCB &pcb, ofstream &outfile);
 };
 
 #endif

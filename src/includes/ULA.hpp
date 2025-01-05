@@ -6,7 +6,8 @@
 
 using namespace std;
 
-class ULA {
+class ULA
+{
 public:
     int exec(int operador_1, int operador_2, Opcode operando);
 };

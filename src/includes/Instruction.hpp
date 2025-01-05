@@ -4,7 +4,8 @@
 #include "Opcode.hpp"
 #include <ostream>
 
-struct Instruction {
+struct Instruction
+{
     Opcode op;
     int Destiny_Register;
     int Register_1;
@@ -13,7 +14,7 @@ struct Instruction {
     Instruction(Opcode opc, int rd, int r1, int r2);
     Instruction();
 
-    friend std::ostream& operator<<(std::ostream& os, const Instruction& instr);
+    friend std::ostream &operator<<(std::ostream &os, const Instruction &instr);
 };
 
 #endif

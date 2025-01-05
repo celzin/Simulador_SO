@@ -9,20 +9,21 @@
 
 using namespace std;
 
-class Registers {
-private: 
+class Registers
+{
+private:
     vector<pair<int, bool>> registradores;
 
 public:
-    Registers(); 
+    Registers();
 
     int get(int index) const;
     void set(int index, int value);
-    void display(ofstream& outfile) const;
+    void display(ofstream &outfile) const;
 
     void reset(); // Reinicializa todos os registradores
-    const vector<pair<int, bool>>& getAllRegisters() const;
-    void setAllRegisters(const vector<pair<int, bool>>& newRegisters);
+    const vector<pair<int, bool>> &getAllRegisters() const;
+    void setAllRegisters(const vector<pair<int, bool>> &newRegisters);
 };
 
 #endif

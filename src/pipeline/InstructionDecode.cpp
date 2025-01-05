@@ -1,6 +1,7 @@
 #include "../includes/InstructionDecode.hpp"
 
-DecodedInstruction InstructionDecode(const Instruction& instr, const Registers& regs) {
+DecodedInstruction InstructionDecode(const Instruction &instr, const Registers &regs)
+{
     DecodedInstruction decoded;
     decoded.opcode = instr.op;
     decoded.destiny = instr.Destiny_Register;
