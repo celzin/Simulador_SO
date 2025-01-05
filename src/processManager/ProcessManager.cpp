@@ -11,8 +11,8 @@ vector<PCB*> ProcessManager::createPCBs(Disco& disco, RAM& ram, Registers& regs,
 
     // Criando pcbs a partir da lista de arquivos de instruções e carregando as instruções na RAM
     for (int i = 0; i < arquivosInstrucoes.size(); ++i) {
-        int quantidadeInstrucoes = disco.loadInstructionsFromFile(ram, arquivosInstrucoes[i], enderecoAtual);
-        if (quantidadeInstrucoes == -1) {
+        vector<int> quantidadeInstrucoes = disco.loadInstructionsFromFile(arquivosInstrucoes[i]);
+        if (quantidadeInstrucoes.empty()) {
             cerr << "Erro ao quantificar instruções do arquivo: " << arquivosInstrucoes[i] << endl;
             continue;
         }
@@ -21,22 +21,26 @@ vector<PCB*> ProcessManager::createPCBs(Disco& disco, RAM& ram, Registers& regs,
         int quantumRandom = distrib(gen);
 
         // Cria o PCB associado à faixa de memória de instruções
-        PCB* novoPCB = new PCB(i + 1, quantumRandom, regs, enderecoAtual, enderecoAtual + quantidadeInstrucoes - 1);
+        PCB* novoPCB = new PCB(i + 1, quantumRandom, regs, 0, quantidadeInstrucoes.size() - 1);
 
-        // Configura o PC inicial do processo
-        novoPCB->PC = enderecoAtual;
+        // Dividir instruções em páginas virtuais e mapear para quadros físicos
+        for (size_t pagina = 0; pagina * RAM::TAMANHO_QUADRO < quantidadeInstrucoes.size(); ++pagina) {
+            size_t inicio = pagina * RAM::TAMANHO_QUADRO;
+            size_t fim = min(inicio + RAM::TAMANHO_QUADRO, quantidadeInstrucoes.size());
 
+            // Extraia os dados da página
+            vector<int> dadosPagina(quantidadeInstrucoes.begin() + inicio, quantidadeInstrucoes.begin() + fim);
+
+            // Alocar quadro físico na RAM
+            int quadro = ram.alocarQuadro();
+            ram.escreverNoQuadro(quadro, dadosPagina);
+
+            // Mapear a página virtual para o quadro físico
+            novoPCB->mapearPaginaParaQuadro(pagina, quadro);
+        }
+
+        novoPCB->PC = 0;
         pcbs.push_back(novoPCB);
-
-        // cout << "Processo " << i + 1
-        //           << ": Base Instruções = " << enderecoAtual
-        //           << ", Limite Instruções = " << enderecoAtual + quantidadeInstrucoes - 1
-        //           << ", PC Inicial = " << novoPCB->PC 
-        //           << ", Quantum = " << quantumRandom
-        //           << endl;
-
-        // Atualiza o endereço base para o próximo conjunto de instruções
-        enderecoAtual += quantidadeInstrucoes;
     }
 
     cout << endl;

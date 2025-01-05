@@ -56,7 +56,7 @@ Instruction Pipeline::InstructionFetch(RAM& ram, int endereco, PCB* pcb) {
     //      << ", Endereço: " << endereco 
     //      << " (Base: " << pcb->getEnderecoBaseInstrucoes() 
     //      << ", Limite: " << pcb->getLimiteInstrucoes() << ")\n";
-    return ram.instruction_memory[endereco];
+    return ram.getInstructionMemory()[endereco];
 }
 
 

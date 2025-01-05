@@ -27,7 +27,7 @@ public:
     void write(int valor); 
     void display(ofstream& outfile) const;  
     void setRegistersFromFile(Registers& regs, const string& regsFilename);
-    int loadInstructionsFromFile(RAM& ram, const string& instrFilename, int enderecoBase);
+    vector<int> loadInstructionsFromFile(const string& instrFilename);
     vector<string> listInstructionsFile(const string& dir);
 };
 

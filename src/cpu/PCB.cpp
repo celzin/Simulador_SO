@@ -60,20 +60,35 @@ void PCB::resetarQuantum(ofstream& outfile) {
 }
 
 // Gerenciamento de memoria
+// void PCB::alocarMemoria(RAM& ram, int enderecoBase, int limite) {
+//     // Verifica se a memória já está alocada
+//     for (int i = enderecoBase; i <= limite; ++i) {
+//         if (ram.isReserved(i)) {
+//             std::cerr << "Erro: Endereço " << i << " já está reservado.\n";
+//             return;
+//         }
+//     }
+//     // Aloca na RAM e registra no PCB
+//     for (int i = enderecoBase; i <= limite; ++i) {
+//         ram.write(i, 0); // Inicializa os endereços na RAM
+//     }
+//     memoriaAlocada = {enderecoBase, limite};
+//     // std::cout << "Memória alocada ao processo " << pid << ": Base=" << enderecoBase << ", Limite=" << limite << "\n";
+// }
+
 void PCB::alocarMemoria(RAM& ram, int enderecoBase, int limite) {
-    // Verifica se a memória já está alocada
-    for (int i = enderecoBase; i <= limite; ++i) {
-        if (ram.isReserved(i)) {
-            std::cerr << "Erro: Endereço " << i << " já está reservado.\n";
-            return;
-        }
+    // Dividir memória virtual em páginas
+    for (int endereco = enderecoBase; endereco <= limite; endereco += RAM::TAMANHO_QUADRO) {
+        // Alocar quadro na RAM
+        int quadro = ram.alocarQuadro();
+
+        // Mapear página virtual para quadro físico
+        int pagina = (endereco - enderecoBase) / RAM::TAMANHO_QUADRO;
+        mapearPaginaParaQuadro(pagina, quadro);
     }
-    // Aloca na RAM e registra no PCB
-    for (int i = enderecoBase; i <= limite; ++i) {
-        ram.write(i, 0); // Inicializa os endereços na RAM
-    }
+
+    // Atualiza o registro da memória alocada no PCB (somente virtual)
     memoriaAlocada = {enderecoBase, limite};
-    // std::cout << "Memória alocada ao processo " << pid << ": Base=" << enderecoBase << ", Limite=" << limite << "\n";
 }
 
 bool PCB::verificarAcessoMemoria(int endereco) const {
@@ -81,14 +96,26 @@ bool PCB::verificarAcessoMemoria(int endereco) const {
     return endereco >= memoriaAlocada[0] && endereco <= memoriaAlocada[1];
 }
 
+// void PCB::liberarMemoria(RAM& ram) {
+//     if (!memoriaAlocada.empty()) {
+//         for (int i = memoriaAlocada[0]; i <= memoriaAlocada[1]; ++i) {
+//             ram.write(i, 0); // Libera os endereços na RAM
+//         }
+//         memoriaAlocada.clear();
+//         // std::cout << "Memória liberada para o processo " << pid << "\n";
+//     }
+// }
+
 void PCB::liberarMemoria(RAM& ram) {
-    if (!memoriaAlocada.empty()) {
-        for (int i = memoriaAlocada[0]; i <= memoriaAlocada[1]; ++i) {
-            ram.write(i, 0); // Libera os endereços na RAM
+    for (int pagina = 0; pagina < tabelaPaginas.size(); ++pagina) {
+        if (tabelaPaginas[pagina] != -1) {
+            ram.liberarQuadro(tabelaPaginas[pagina]); // Libera o quadro físico na RAM
+            tabelaPaginas[pagina] = -1;              // Marca a página como não mapeada
         }
-        memoriaAlocada.clear();
-        // std::cout << "Memória liberada para o processo " << pid << "\n";
     }
+
+    memoriaAlocada.clear(); // Limpa o registro de memória alocada no PCB
+    tabelaPaginas.clear();  // Limpa a tabela de páginas
 }
 
 // Gerenciamento de recursos (I/O)
@@ -107,10 +134,16 @@ void PCB::exibirPCB(ofstream& outfile) const {
               << "Estado: " << (estado == PRONTO ? "PRONTO" : estado == EXECUCAO ? "EXECUCAO" : estado == BLOQUEADO ? "BLOQUEADO" : "FINALIZADO") << "\n"
               << "Quantum Total: " << quantumProcesso << ", Quantum Restante: " << quantumRestante << "\n"
               << "PC: " << PC << "\n"
-              << "\nRegistradores:\n";
+              << "\nTabela de Páginas:\n";
+
+    for (size_t i = 0; i < tabelaPaginas.size(); ++i) {
+        outfile << "  Página " << i << " -> Quadro " << tabelaPaginas[i] << "\n";
+    }
+     
+    outfile <<  "\nRegistradores:\n";
     registradores.display(outfile);
 
-    outfile << "\nMemória Alocada:\n";
+    outfile << "\nMemória Virtual Alocada:\n";
     if (!memoriaAlocada.empty()) {
         outfile << "  Base: " << memoriaAlocada[0] << ", Limite: " << memoriaAlocada[1] << "\n";
     } else {
@@ -139,4 +172,23 @@ int PCB::getEnderecoBaseInstrucoes() const {
 
 int PCB::getLimiteInstrucoes() const {
     return enderecoLimiteInstrucoes;
+}
+
+void PCB::mapearPaginaParaQuadro(int pagina, int quadro) {
+    if (tabelaPaginas.size() <= pagina) {
+        tabelaPaginas.resize(pagina + 1, -1); // Expande a tabela de páginas, se necessário
+    }
+    tabelaPaginas[pagina] = quadro;
+}
+
+int PCB::traduzirEnderecoVirtual(int enderecoVirtual) {
+    int pagina = enderecoVirtual / RAM::TAMANHO_QUADRO;
+    int deslocamento = enderecoVirtual % RAM::TAMANHO_QUADRO;
+
+    if (pagina >= tabelaPaginas.size() || tabelaPaginas[pagina] == -1) {
+        throw runtime_error("Erro: Página virtual não mapeada!");
+    }
+
+    int quadro = tabelaPaginas[pagina];
+    return quadro * RAM::TAMANHO_QUADRO + deslocamento; // Converte para endereço físico
 }

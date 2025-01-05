@@ -3,6 +3,7 @@
 
 #include "Opcode.hpp"
 #include <ostream>
+#include <cstdint>
 
 struct Instruction {
     Opcode op;
@@ -13,6 +14,8 @@ struct Instruction {
     Instruction(Opcode opc, int rd, int r1, int r2);
     Instruction();
 
+    int toInt() const;
+    static Instruction fromInt(int value);
     friend std::ostream& operator<<(std::ostream& os, const Instruction& instr);
 };
 

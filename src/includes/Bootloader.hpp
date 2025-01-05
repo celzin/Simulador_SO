@@ -30,7 +30,7 @@ class Bootloader {
         static void loadConfigBootloader(const string& file);
         static void garantirDiretorioSaidaExiste(const string& path);
         static void inicializarSistema(vector<Core>& cores, Disco& disco, Escalonador& escalonador, Perifericos& periferico, RAM& ram, Registers& regs);
-        static vector<PCB*> createAndConfigPCBs(Disco& disco, RAM& ram, Registers& regs, Escalonador& escalonador, const vector<string>& arquivosInstrucoes, ofstream& log);
+        static vector<PCB*> createAndConfigPCBs(Disco& disco, RAM& ram, Registers& regs, Escalonador& escalonador, const vector<string>& arquivosInstrucoes, ofstream& log, int tamanhoRAM);
         static void createCores(vector<Core>& cores, int numNucleos, RAM& ram, Disco& disco, Escalonador& escalonador);
 
         static int getQuantumProcessMin() { return QUANTUM_PROCESS_MIN; };

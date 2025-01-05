@@ -51,21 +51,39 @@ void Bootloader::garantirDiretorioSaidaExiste(const string& path) {
     }
 }
 
-vector<PCB*> Bootloader::createAndConfigPCBs(Disco& disco, RAM& ram, Registers& regs, Escalonador& escalonador, const vector<string>& arquivosInstrucoes, ofstream& globalLog) {
+vector<PCB*> Bootloader::createAndConfigPCBs(
+    Disco& disco, RAM& ram, Registers& regs, Escalonador& escalonador,
+    const vector<string>& arquivosInstrucoes, ofstream& globalLog, int tamanhoRAM) {
+    
+    // Definindo o tamanho do bloco como constante
+    const int TAMANHO_BLOCO = 5; // Cada processo recebe 5 endereços de memória
+
     // Criando PCBs
     vector<PCB*> pcbs = ProcessManager::createPCBs(disco, ram, regs, arquivosInstrucoes);
 
-    // Alocação de memória para cada processo && Adicionando os processos ao escalonador
+    // Alocação de memória para cada processo e adicionando ao escalonador
     for (auto& pcb : pcbs) {
-        int enderecoBase = 0 + (pcb->pid - 1) * 5; // Exemplo: faixas de memória de 5 endereços por processo
-        int limite = enderecoBase + 4;
+        // Calculando endereço base e limite
+        int enderecoBase = (pcb->pid - 1) * TAMANHO_BLOCO;
+        int limite = enderecoBase + TAMANHO_BLOCO - 1;
 
+        // Verificando se o limite ultrapassa o tamanho da RAM
+        if (limite >= tamanhoRAM) {
+            cerr << "Erro: Memória insuficiente para alocar o processo " << pcb->pid << endl;
+            globalLog << "Erro: Memória insuficiente para alocar o processo " << pcb->pid << endl;
+            exit(EXIT_FAILURE);
+        }
+
+        // Alocando memória
         pcb->alocarMemoria(ram, enderecoBase, limite);
+
+        // Adicionando o processo ao escalonador
         escalonador.adicionarProcesso(pcb, globalLog);
     }
 
     return pcbs;
 }
+
 
 void Bootloader::createCores(vector<Core>& cores, int numNucleos, RAM& ram, Disco& disco, Escalonador& escalonador) {
     // Criando múltiplos núcleos
@@ -91,11 +109,25 @@ void Bootloader::inicializarSistema(vector<Core>& cores, Disco& disco, Escalonad
     // Lista de arquivos de instrução
     vector<string> arquivosInstrucoes = disco.listInstructionsFile("data/instr");
     
+    // Definindo o tamanho da RAM (exemplo: 64 endereços)
+    int tamanhoRAM = ram.getSize();
+
     // Criando e configurando PCBs
-    vector<PCB*> pcbs = Bootloader::createAndConfigPCBs(disco, ram, regs, escalonador, arquivosInstrucoes, globalLog);
+    vector<PCB*> pcbs = Bootloader::createAndConfigPCBs(disco, ram, regs, escalonador, arquivosInstrucoes, globalLog, tamanhoRAM);
+
+    // **Teste 1: Verificar PCBs Criados**
+    globalLog << "\n=== Teste: PCBs Criados ===\n";
+    for (auto& pcb : pcbs) {
+        pcb->exibirPCB(globalLog); // Exibe informações dos PCBs criados
+    }
 
     // Criando múltiplos núcleos
     createCores(cores, NUM_NUCLEOS, ram, disco, escalonador);
+
+    // **Teste 2: Verificar RAM Após Alocação**
+    globalLog << "\n=== Teste: Estado da RAM Após Alocação ===\n";
+    ram.display(globalLog); // Exibe o estado da RAM após a alocação de memória
+
 
     // Executando os núcleos em threads
     vector<thread> threads;
@@ -108,8 +140,8 @@ void Bootloader::inicializarSistema(vector<Core>& cores, Disco& disco, Escalonad
         th.join(); // Espera todas as threads terminarem
     }
 
-    // Exibindo o estado final da RAM
-    globalLog << "\n===== Estado Final da RAM =====\n";
+    // **Teste 3: Verificar Estado Final da RAM**
+    globalLog << "\n=== Teste: Estado Final da RAM ===\n";
     ram.display(globalLog);
 
     // Exibindo o estado final do Disco

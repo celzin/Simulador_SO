@@ -5,7 +5,7 @@ int main() {
     Disco disco;
     Escalonador escalonador;
     Perifericos periferico;
-    RAM ram;
+    RAM ram(64);
     Registers regs;
     
     Bootloader::loadConfigBootloader("data/configBootloader.txt");
