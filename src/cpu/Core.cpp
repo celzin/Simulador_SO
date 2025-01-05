@@ -10,9 +10,9 @@ void Core::activate(ofstream& outfile) {
         PCB* pcb = escalonador.obterProximoProcesso(outfile);
 
         outfile << "Processo " << pcb->pid
-                  << ": Base Instruções = " << pcb->enderecoBaseInstrucoes
-                  << ", Limite Instruções = " << pcb->enderecoLimiteInstrucoes
-                  << ", PC Inicial = " << pcb->PC
+                  << ": Base (Instruções) = " << pcb->enderecoBaseInstrucoes
+                  << ", Limite (Instruções) = " << pcb->enderecoLimiteInstrucoes
+                  << ", PC (Inicial) = " << pcb->PC
                   << ", Quantum = " << pcb->quantumProcesso
                   << endl;
 
@@ -30,7 +30,15 @@ void Core::activate(ofstream& outfile) {
         outfile << "\nANTES DA EXECUÇÃO";
         pcb->exibirPCB(outfile); // Imprime o estado inicial do PCB
 
-        while (!pcb->quantumExpirado()) {
+        // Loop principal de execução de processo
+        while(true){
+            // Verifica se o quantum expirou
+            if (pcb->quantumExpirado()) {
+                outfile << "Quantum expirado para o processo " << pcb->pid << ". Troca de contexto.\n";
+                pcb->salvarEstado(pipeline.getPipelineState()); // Salva o estado completo
+                break;
+             }
+        
             // Valida se o PC está dentro do limite de instruções antes do fetch
             if (pcb->PC >= pcb->getLimiteInstrucoes()) {
                 outfile << "\n[Núcleo " << this_thread::get_id() << "] Processo " << pcb->pid 
@@ -83,7 +91,6 @@ void Core::activate(ofstream& outfile) {
         }
     }
 }
-
 
 void Core::run() {
     if(!filesystem::exists(OUTPUT_DIR)){

@@ -1,15 +1,14 @@
 #ifndef UNIDADECONTROLE_HPP
 #define UNIDADECONTROLE_HPP
 
-#include <iostream>
-#include "Instruction.hpp"
-#include "Registers.hpp"
-#include "ULA.hpp"
-#include "RAM.hpp"
-#include "InstructionDecode.hpp"
 #include "Disco.hpp"
-#include "Pipeline.hpp"
+#include "Instruction.hpp"
 #include "PCB.hpp"
+#include "Pipeline.hpp"
+#include "RAM.hpp"
+#include "Registers.hpp"
+
+#include <iostream>
 
 using namespace std;
 
