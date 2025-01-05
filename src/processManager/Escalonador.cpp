@@ -9,10 +9,10 @@ PCB* Escalonador::obterProximoProcesso(ofstream& outfile) {
         filaProntos.pop();
         outfile << "\n************************************************************************************************************************\n";
         outfile << "[Escalonador] Retirando o processo " << processo->pid << " da fila de prontos.\n";
-        return processo;  // Retorna o primeiro processo da fila
+        return processo;
     }
     outfile << "[Escalonador] Nenhum processo disponível na fila de prontos.\n";
-    return nullptr;  // Retorna nullptr se a fila estiver vazia
+    return nullptr;
 }
 
 void Escalonador::adicionarProcesso(PCB* processo, ofstream& outfile) {

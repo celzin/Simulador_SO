@@ -8,15 +8,11 @@ using namespace std;
 Pipeline::Pipeline() {}
 
 std::vector<int> Pipeline::getPipelineState() const {
-    return pipelineState; // Retorna o estado atual
+    return pipelineState;
 }
 
 void Pipeline::PipelineProcess(const Instruction& instr, Registers& regs, RAM& ram, int& PC, Disco& disco, int& Clock) {
         // cout << "[Pipeline] Executando instrução: Opcode " << instr.op << endl;
-
-        // Instruction instr = InstructionFetch(ram, PC / 4);
-        // Clock++;
-
         DecodedInstruction decodedInstr = InstructionDecode(instr, regs);
         Clock++;
 
@@ -33,16 +29,6 @@ void Pipeline::PipelineProcess(const Instruction& instr, Registers& regs, RAM& r
         //PC += 4;
 }
 
-// Instruction Pipeline::InstructionFetch(RAM& ram, int endereco, PCB* pcb) {
-//     if (endereco > pcb->getLimiteInstrucoes() || endereco < pcb->getEnderecoBaseInstrucoes()) {
-//         cerr << "Erro: Acesso inválido à memória no endereço " << endereco << " pelo processo " << pcb->pid << endl;
-//         return Instruction(ADD, 0, 0, 0);
-//     }
-    
-//     cout << "[Fetch] Processo " << pcb->pid << ", Endereço: " << endereco << endl;
-//     return ram.instruction_memory[endereco];
-// }
-
 Instruction Pipeline::InstructionFetch(RAM& ram, int endereco, PCB* pcb) {
     if (endereco < pcb->getEnderecoBaseInstrucoes() || endereco > pcb->getLimiteInstrucoes()) {
         cerr << "Erro: Acesso inválido à memória no endereço " << endereco 
@@ -51,27 +37,8 @@ Instruction Pipeline::InstructionFetch(RAM& ram, int endereco, PCB* pcb) {
              << ", Limite: " << pcb->getLimiteInstrucoes() << ")\n";
         return Instruction(ADD, 0, 0, 0); // Instrução "neutra" ou de erro
     }
-    
-    // cout << "[Fetch] Processo " << pcb->pid 
-    //      << ", Endereço: " << endereco 
-    //      << " (Base: " << pcb->getEnderecoBaseInstrucoes() 
-    //      << ", Limite: " << pcb->getLimiteInstrucoes() << ")\n";
     return ram.instruction_memory[endereco];
 }
-
-
-// Instruction Pipeline::InstructionFetch(RAM& ram, int endereco) {
-//     std::cout << "[InstructionFetch] Endereço solicitado: " << endereco << "\n";
-//     if (endereco >= 0 && endereco < ram.tamanho) {
-//         const Instruction& instr = ram.instruction_memory[endereco];
-//         std::cout << "[InstructionFetch] Opcode: " << instr.op << ", Reg1: " 
-//                   << instr.Destiny_Register << ", Reg2: " << instr.Register_1 << ", Reg3: " << instr.Register_2 << "\n";
-//         return instr;
-//     }
-//     std::cerr << "Erro: Endereço inválido para instrução na RAM " << endereco << "\n";
-//     return Instruction(ADD, 0, 0, 0);
-// }
-
 
 void Pipeline::Wb(const DecodedInstruction& decoded, int& resultado, RAM& ram, Disco& disco, int& Clock) {
     ram.write(decoded.value1, resultado); 

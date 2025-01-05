@@ -82,15 +82,6 @@ void Core::activate(ofstream& outfile) {
             outfile << "[Núcleo " << this_thread::get_id() << "] Processo [PID: " << pcb->pid << "] bloqueado.\n";
         }
     }
-
-    // // Exibindo o estado final da RAM
-    // outfile << "\n===== Estado Final da RAM =====\n";
-    // ram.display(outfile);
-
-    // // Exibindo o estado final do Disco
-    // outfile << "\n===== Estado Final do Disco =====\n";
-    // disco.display(outfile);
-
 }
 
 
@@ -113,7 +104,6 @@ void Core::run() {
     }
 
     outfile << "[Núcleo] ID: " << this_thread::get_id() << "\n";
-    // outfile << "===============================\n";
 
     // cout << "\n" << "Executando o núcleo (Thread) com PC: " << PC << "\n\n";
     activate(outfile);

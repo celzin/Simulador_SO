@@ -28,13 +28,6 @@ vector<PCB*> ProcessManager::createPCBs(Disco& disco, RAM& ram, Registers& regs,
 
         pcbs.push_back(novoPCB);
 
-        // cout << "Processo " << i + 1
-        //           << ": Base Instruções = " << enderecoAtual
-        //           << ", Limite Instruções = " << enderecoAtual + quantidadeInstrucoes - 1
-        //           << ", PC Inicial = " << novoPCB->PC 
-        //           << ", Quantum = " << quantumRandom
-        //           << endl;
-
         // Atualiza o endereço base para o próximo conjunto de instruções
         enderecoAtual += quantidadeInstrucoes;
     }

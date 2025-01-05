@@ -19,7 +19,6 @@ void Registers::set(int index, int value) {
 }
 
 void Registers::display(ofstream& outfile) const {
-    // cout << endl << "Registradores: " << endl;
     for (size_t i = 0; i < registradores.size(); ++i) {
         outfile << "R[" << i << "] = " << registradores[i].first << ", Flag = " << (registradores[i].second ? "sujo" : "limpo") << endl;
     }
