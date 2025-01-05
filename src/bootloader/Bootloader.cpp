@@ -130,5 +130,7 @@ void Bootloader::inicializarSistema(vector<Core>& cores, Disco& disco, Escalonad
         delete pcb;
     }
 
+    cout << "Simulação finalizada. Logs disponíveis em: " << OUTPUT_LOGS_DIR << endl;
+
     globalLog.close();
 }

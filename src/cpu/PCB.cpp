@@ -95,7 +95,7 @@ void PCB::liberarMemoria(RAM& ram) {
 // Gerenciamento de recursos (I/O)
 void PCB::associarRecurso(const std::string& nomeRecurso, bool alocado) {
     recursos.estadoPeriferico(nomeRecurso, alocado);
-    std::cout << "Recurso " << nomeRecurso << (alocado ? " alocado" : " liberado") << " ao processo " << pid << ".\n";
+    // std::cout << "Recurso " << nomeRecurso << (alocado ? " alocado" : " liberado") << " ao processo " << pid << ".\n";
 }
 
 bool PCB::verificarRecurso(const std::string& nomeRecurso) const {

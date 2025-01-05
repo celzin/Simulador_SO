@@ -9,9 +9,9 @@ Perifericos::Perifericos() {
 void Perifericos::estadoPeriferico(const std::string& nomeRecurso, bool estado) {
     if (perifericos.find(nomeRecurso) != perifericos.end()) {
         perifericos[nomeRecurso] = estado;
-        std::cout << "Periférico " << nomeRecurso << (estado ? " alocado." : " liberado.") << std::endl;
+        // std::cout << "Periférico " << nomeRecurso << (estado ? " alocado." : " liberado.") << std::endl;
     } else {
-        std::cerr << "Erro: Periférico " << nomeRecurso << " não encontrado!" << std::endl;
+        // std::cerr << "Erro: Periférico " << nomeRecurso << " não encontrado!" << std::endl;
     }
 }
 
