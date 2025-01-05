@@ -110,6 +110,8 @@ void Bootloader::inicializarSistema(vector<Core> &cores, Disco &disco, Escalonad
         return;
     }
 
+    globalLog << "Inicializando o sistema...\n";
+
     // Configurando os registradores
     disco.setRegistersFromFile(regs, "data/setRegisters.txt");
 
@@ -122,6 +124,9 @@ void Bootloader::inicializarSistema(vector<Core> &cores, Disco &disco, Escalonad
     // Criando múltiplos núcleos
     createCores(cores, NUM_NUCLEOS, ram, disco, escalonador);
 
+    // Medindo o tempo total de execução
+    auto inicio = chrono::high_resolution_clock::now();
+
     // Executando os núcleos em threads
     vector<thread> threads;
     for (auto &core : cores)
@@ -133,6 +138,20 @@ void Bootloader::inicializarSistema(vector<Core> &cores, Disco &disco, Escalonad
     for (auto &th : threads)
     {
         th.join(); // Espera todas as threads terminarem
+    }
+
+    // Medindo o tempo final de execução
+    auto fim = chrono::high_resolution_clock::now();
+    double duracao = chrono::duration_cast<chrono::duration<double, milli>>(fim - inicio).count();
+
+    globalLog << "\n===== Tempo Total de Execução =====\n";
+    globalLog << "Duração total: " << fixed << setprecision(3) << duracao << " ms\n";
+
+    // Exibindo estatísticas de cada núcleo
+    for (size_t i = 0; i < cores.size(); ++i)
+    {
+        globalLog << "\n===== Estatísticas do Núcleo " << i + 1 << " =====\n";
+        cores[i].exibirTempoCore(globalLog);
     }
 
     // Exibindo o estado final da RAM

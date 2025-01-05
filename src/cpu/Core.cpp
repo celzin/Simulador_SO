@@ -9,6 +9,7 @@ void Core::activate(ofstream &outfile)
 {
     while (escalonador.temProcessosProntos())
     {
+        auto inicioOcupado = chrono::high_resolution_clock::now();
         PCB *pcb = escalonador.obterProximoProcesso(outfile);
 
         outfile << "Processo " << pcb->pid
@@ -101,7 +102,13 @@ void Core::activate(ofstream &outfile)
         {
             outfile << "[Núcleo " << this_thread::get_id() << "] Processo [PID: " << pcb->pid << "] bloqueado.\n";
         }
+        auto fimOcupado = chrono::high_resolution_clock::now();
+        tempoOcupado += chrono::duration_cast<chrono::duration<double, milli>>(fimOcupado - inicioOcupado).count();
     }
+    auto inicioOcioso = chrono::high_resolution_clock::now();
+    this_thread::sleep_for(chrono::milliseconds(1));
+    auto fimOcioso = chrono::high_resolution_clock::now();
+    tempoOcioso += chrono::duration_cast<chrono::duration<double, milli>>(fimOcioso - inicioOcioso).count();
 }
 
 void Core::run()
@@ -129,7 +136,26 @@ void Core::run()
 
     // cout << "\n" << "Executando o núcleo (Thread) com PC: " << PC << "\n\n";
     activate(outfile);
+    exibirTempoCore(outfile);
     outfile.close();
+}
+
+void Core::exibirTempoCore(ofstream &outfile)
+{
+    outfile << fixed << setprecision(3);
+    outfile << "\n===== Estatísticas do Núcleo =====\n";
+    outfile << "Tempo ocupado: " << tempoOcupado << " ms\n";
+    outfile << "Tempo ocioso: " << tempoOcioso << " ms\n";
+
+    if (tempoOcupado + tempoOcioso > 0)
+    {
+        outfile << "Taxa de utilização: "
+                << (tempoOcupado / (tempoOcupado + tempoOcioso)) * 100 << " %\n";
+    }
+    else
+    {
+        outfile << "Taxa de utilização: 0.000 %\n";
+    }
 }
 
 void Core::validateMemoryAccess(PCB *processo, int endereco, ofstream &outfile)

@@ -14,6 +14,8 @@
 #include <vector>
 #include <sstream>
 #include <filesystem>
+#include <chrono>
+#include <iomanip>
 
 using namespace std;
 
@@ -34,8 +36,14 @@ public:
     Core(RAM &ram, Disco &disco, Escalonador &escalonador);
     void activate(ofstream &outfile);
     void run();
+    void exibirTempoCore(ofstream &outfile);
 
 private:
+    chrono::time_point<chrono::high_resolution_clock> inicioExecucao;
+    chrono::time_point<chrono::high_resolution_clock> fimExecucao;
+    double tempoOcupado = 0.0;
+    double tempoOcioso = 0.0;
+
     void validateMemoryAccess(PCB *processo, int endereco, ofstream &outfile);
     void gerenciarRecursos(PCB *processo, ofstream &outfile);
 };
