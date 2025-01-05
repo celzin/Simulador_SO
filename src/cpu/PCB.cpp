@@ -103,7 +103,7 @@ bool PCB::verificarRecurso(const std::string& nomeRecurso) const {
 }
 
 void PCB::exibirPCB(ofstream& outfile) const {
-    outfile << "\n\n=============== [PCB] ===============" << "\n"
+    outfile << "\n=============== [PCB] ===============" << "\n"
               << "[PCB] Processo ID: " << pid << "\n"
               << "Estado: " << (estado == PRONTO ? "PRONTO" : estado == EXECUCAO ? "EXECUCAO" : estado == BLOQUEADO ? "BLOQUEADO" : "FINALIZADO") << "\n"
               << "Quantum Total: " << quantumProcesso << ", Quantum Restante: " << quantumRestante << "\n"

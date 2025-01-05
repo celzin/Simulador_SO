@@ -26,7 +26,8 @@ void Core::activate(ofstream& outfile) {
         pcb->restaurarEstado(pipelineState, outfile);
 
         pcb->atualizarEstado(EXECUCAO, outfile);
-        outfile << "[Núcleo " << this_thread::get_id() << "] Iniciando execução do processo [PID: " << pcb->pid << "]";
+        outfile << "[Núcleo " << this_thread::get_id() << "] Iniciando execução do processo [PID: " << pcb->pid << "]\n";
+        outfile << "\nANTES DA EXECUÇÃO";
         pcb->exibirPCB(outfile); // Imprime o estado inicial do PCB
 
         while (!pcb->quantumExpirado()) {
@@ -64,6 +65,7 @@ void Core::activate(ofstream& outfile) {
         // Salvar o estado do processo
         pcb->salvarEstado(pipeline.getPipelineState());
         outfile << "[Núcleo " << this_thread::get_id() << "] Finalizando execução do processo [PID: " << pcb->pid << "].\n";
+        outfile << "\nDEPOIS DA EXECUÇÃO";
         pcb->exibirPCB(outfile); // Exibe o estado final do PCB
 
         // Gerenciamento de estados
