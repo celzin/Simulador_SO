@@ -56,7 +56,8 @@ bool PCB::quantumExpirado() const {
 
 void PCB::resetarQuantum(ofstream& outfile) {
     quantumRestante = quantumProcesso;
-    outfile << "[Quantum] Quantum do processo " << pid << " foi reiniciado para " << quantumProcesso << "\n";
+    atualizarEstado(BLOQUEADO, outfile);
+    outfile << "[Preempção] Quantum do processo " << pid << " foi reiniciado para " << quantumProcesso << "\n";
 }
 
 // Gerenciamento de memoria
@@ -102,7 +103,7 @@ bool PCB::verificarRecurso(const std::string& nomeRecurso) const {
 }
 
 void PCB::exibirPCB(ofstream& outfile) const {
-    outfile << "\n\n===============================" << "\n"
+    outfile << "\n\n=============== [PCB] ===============" << "\n"
               << "[PCB] Processo ID: " << pid << "\n"
               << "Estado: " << (estado == PRONTO ? "PRONTO" : estado == EXECUCAO ? "EXECUCAO" : estado == BLOQUEADO ? "BLOQUEADO" : "FINALIZADO") << "\n"
               << "Quantum Total: " << quantumProcesso << ", Quantum Restante: " << quantumRestante << "\n"

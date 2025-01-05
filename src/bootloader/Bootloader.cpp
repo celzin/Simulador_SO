@@ -57,8 +57,8 @@ vector<PCB*> Bootloader::createAndConfigPCBs(Disco& disco, RAM& ram, Registers& 
 
     // Alocação de memória para cada processo && Adicionando os processos ao escalonador
     for (auto& pcb : pcbs) {
-        int enderecoBase = 0 + (pcb->pid - 1) * 5; // Exemplo: faixas de memória de 5 endereços por processo
-        int limite = enderecoBase + 4;
+        int enderecoBase = pcb->getEnderecoBaseInstrucoes(); // Exemplo: faixas de memória de 5 endereços por processo
+        int limite = pcb->getLimiteInstrucoes();
 
         pcb->alocarMemoria(ram, enderecoBase, limite);
         escalonador.adicionarProcesso(pcb, globalLog);
