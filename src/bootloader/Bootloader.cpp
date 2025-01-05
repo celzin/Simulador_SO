@@ -61,6 +61,14 @@ vector<PCB*> Bootloader::createAndConfigPCBs(Disco& disco, RAM& ram, Registers& 
         int limite = pcb->getLimiteInstrucoes();
 
         pcb->alocarMemoria(ram, enderecoBase, limite);
+
+        // Associar recurso apenas ao processo com PID = 2
+        if (pcb->pid == 2) {
+            string recursoNecessario = "impressora"; // Recurso necessário
+            pcb->associarRecurso(recursoNecessario, true); // Aloca o recurso
+            globalLog << "[Bootloader] Recurso " << recursoNecessario << " alocado ao processo " << pcb->pid << ".\n";
+        } 
+
         escalonador.adicionarProcesso(pcb, globalLog);
     }
 
