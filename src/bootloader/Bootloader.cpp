@@ -150,7 +150,7 @@ void Bootloader::inicializarSistema(vector<Core> &cores, Disco &disco, Escalonad
     // Exibindo estatísticas de cada núcleo
     for (size_t i = 0; i < cores.size(); ++i)
     {
-        globalLog << "\n===== Estatísticas do Núcleo " << i + 1 << " =====\n";
+        globalLog << "\n===== [CORE " << i + 1 << "] =====";
         cores[i].exibirTempoCore(globalLog);
     }
 
