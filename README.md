@@ -22,7 +22,7 @@ O projeto utiliza arquivos de configuração e instruções para definir os cen�
 
 ### Arquitetura do Projeto
 
-A arquitetura do projeto foi planejada com base neste modelo conceitual, que reflete os principais componentes e interações do simulador.
+A arquitetura do projeto foi idealizada com base no modelo conceitual abaixo, que representa os principais componentes e interações do simulador. Esse modelo serviu como referência para o desenvolvimento, mas a implementação final foi projetada de forma flexível, permitindo ajustes futuros para atender a requisitos práticos, aprimorar a eficiência e incorporar boas práticas de design.
 
 ![alt text](/docs/imgs/image.png)
 
