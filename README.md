@@ -20,6 +20,12 @@ O projeto utiliza arquivos de configuração e instruções para definir os cen�
 - **[`setRegisters.txt`](https://github.com/celzin/Simulador_SO/blob/main/data/setRegisters.txt)**: Define os valores iniciais dos registradores.
 - **[`configBootloader.txt`](https://github.com/celzin/Simulador_SO/blob/main/data/configBootloader.txt)**: Configura os parâmetros de execução, como número de núcleos, diretório de logs e quantum dos processos.
 
+### Arquitetura do Projeto
+
+A arquitetura do projeto foi planejada com base neste modelo conceitual, que reflete os principais componentes e interações do simulador.
+
+![alt text](image.png)
+
 ### Exemplo de Arquivos de Configuração
 
 #### instructionsN.txt
