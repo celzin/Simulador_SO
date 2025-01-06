@@ -24,7 +24,7 @@ O projeto utiliza arquivos de configuração e instruções para definir os cen�
 
 A arquitetura do projeto foi planejada com base neste modelo conceitual, que reflete os principais componentes e interações do simulador.
 
-![alt text](image.png)
+![alt text](/docs/imgs/image.png)
 
 ### Exemplo de Arquivos de Configuração
 
