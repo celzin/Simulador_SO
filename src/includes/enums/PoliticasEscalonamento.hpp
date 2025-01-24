@@ -14,6 +14,7 @@ enum class PoliticasEscalonamento
     FCFS,
     SJF,
     PRIORIDADE,
+    SIMILARIDADE,
 };
 
 // Classe para implementar as diferentes políticas de escalonamento

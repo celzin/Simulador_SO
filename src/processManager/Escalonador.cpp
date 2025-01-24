@@ -39,6 +39,13 @@ PCB *Escalonador::obterProximoProcesso(ofstream &outfile)
     case PoliticasEscalonamento::PRIORIDADE:
         processoSelecionado = PoliticasEscalonamentoHandler::selecionarProcessoPrioridade(filaProntos, outfile);
         break;
+    case PoliticasEscalonamento::SIMILARIDADE:
+        processoSelecionado = lshManager.buscarProcessosSimilares();
+        if (!processoSelecionado)
+        {
+            processoSelecionado = PoliticasEscalonamentoHandler::selecionarProcessoFCFS(filaProntos, outfile);
+        }
+        break;
     }
 
     if (!processoSelecionado)
@@ -78,4 +85,9 @@ bool Escalonador::filaVazia() const
 bool Escalonador::temProcessosProntos() const
 {
     return !filaProntos.empty();
+}
+
+PoliticasEscalonamento Escalonador::obterPoliticaAtual() const
+{
+    return politicaAtual;
 }

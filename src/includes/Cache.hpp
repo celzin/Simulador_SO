@@ -1,81 +1,20 @@
 #ifndef CACHE_HPP
 #define CACHE_HPP
 
+#include "PCB.hpp"
 #include <unordered_map>
 #include <queue>
-#include <iostream>
-
-using namespace std;
 
 class Cache
 {
 private:
-    struct CacheLine
-    {
-        int data;
-        bool dirty;
-    };
-
-    unordered_map<int, CacheLine> cache;
-    queue<int> fcfsQueue;
-    int capacidade;
+    std::unordered_map<int, int> cache; // Hash do processo -> Resultado
+    std::queue<int> ordemFIFO;          // FIFO para remoção
+    static const int TAMANHO_CACHE = 8; // Tamanho fixo
 
 public:
-    Cache(int capacidade) : capacidade(capacidade) {}
-
-    bool contains(int address)
-    {
-        return cache.find(address) != cache.end();
-    }
-
-    int get(int address)
-    {
-        if (contains(address))
-        {
-            return cache[address].data;
-        }
-        else
-        {
-            cerr << "Erro: Endereço " << address << " não está no cache!" << endl;
-            return -1;
-        }
-    }
-
-    void set(int address, int value, bool writeBack = false)
-    {
-        if (cache.size() >= capacidade)
-        {
-            evict();
-        }
-
-        cache[address] = {value, writeBack};
-        fcfsQueue.push(address);
-    }
-
-    void evict()
-    {
-        if (fcfsQueue.empty())
-            return;
-
-        int oldAddress = fcfsQueue.front();
-        fcfsQueue.pop();
-
-        if (cache[oldAddress].dirty)
-        {
-            cout << "Escrevendo dado modificado de R" << oldAddress << " na memória principal (Write-back)." << endl;
-        }
-
-        cache.erase(oldAddress);
-        cout << "Removendo R" << oldAddress << " do cache." << endl;
-    }
-
-    void markDirty(int address)
-    {
-        if (contains(address))
-        {
-            cache[address].dirty = true;
-        }
-    }
+    void armazenarResultado(PCB *pcb, int resultado);
+    int buscarResultado(PCB *pcb);
 };
 
 #endif

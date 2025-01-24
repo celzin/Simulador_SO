@@ -193,3 +193,23 @@ void PCB::setTempoEstimado(int tempo)
 {
     tempoEstimado = tempo;
 }
+
+void PCB::atualizarPerfilInstrucoes(Opcode op)
+{
+    perfilInstrucoes[op]++;
+}
+
+std::unordered_map<Opcode, int> PCB::getPerfilInstrucoes() const
+{
+    return perfilInstrucoes;
+}
+
+void PCB::setHash(int h)
+{
+    hashLSH = h;
+}
+
+int PCB::getHash() const
+{
+    return hashLSH;
+}

@@ -3,6 +3,8 @@
 
 #include "PCB.hpp"
 #include "enums/PoliticasEscalonamento.hpp"
+#include "LSHManager.hpp"
+#include "Cache.hpp"
 #include <queue>
 #include <mutex>
 #include <fstream>
@@ -15,7 +17,9 @@ private:
     queue<PCB *> filaProntos;
     queue<PCB *> filaBloqueados;
     PoliticasEscalonamento politicaAtual;
+    LSHManager lshManager;
     mutex mtx;
+    Cache cache;
 
 public:
     Escalonador(PoliticasEscalonamento politica = PoliticasEscalonamento::FCFS);
@@ -30,6 +34,8 @@ public:
 
     bool filaVazia() const;
     bool temProcessosProntos() const;
+
+    PoliticasEscalonamento obterPoliticaAtual() const;
 };
 
 #endif

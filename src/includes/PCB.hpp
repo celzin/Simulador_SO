@@ -58,6 +58,13 @@ public:
     int calcularInstrucoesRestantes() const;
 
     void setTempoEstimado(int tempo);
+
+    std::unordered_map<Opcode, int> perfilInstrucoes;
+    int hashLSH;
+    void atualizarPerfilInstrucoes(Opcode op);
+    std::unordered_map<Opcode, int> getPerfilInstrucoes() const;
+    void setHash(int h);
+    int getHash() const;
 };
 
 #endif
