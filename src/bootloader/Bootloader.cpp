@@ -49,7 +49,8 @@ void Bootloader::loadConfigBootloader(const string &file)
     unordered_map<string, PoliticasEscalonamento> politicaMap = {
         {"FCFS", PoliticasEscalonamento::FCFS},
         {"SJF", PoliticasEscalonamento::SJF},
-        {"PRIORIDADE", PoliticasEscalonamento::PRIORIDADE}};
+        {"PRIORIDADE", PoliticasEscalonamento::PRIORIDADE},
+        {"SIMILARIDADE", PoliticasEscalonamento::SIMILARIDADE}};
 
     string politicaStr = configs["POLITICA_ESCALONAMENTO"];
     if (politicaMap.find(politicaStr) != politicaMap.end())
@@ -158,8 +159,9 @@ void Bootloader::inicializarSistema(vector<Core> &cores, Disco &disco, Escalonad
               << "====== Informações Gerais do Sistema Operacional ======" << endl;
     globalLog << "Número de Núcleos: " << NUM_NUCLEOS << endl;
     globalLog << "Número de Processos: " << disco.listInstructionsFile("data/instr").size() << endl;
-    globalLog << "Política de Escalonamento: " << (POLITICA_ESCALONAMENTO == PoliticasEscalonamento::FCFS ? "FCFS" : POLITICA_ESCALONAMENTO == PoliticasEscalonamento::SJF ? "SJF"
-                                                                                                                                                                           : "PRIORIDADE")
+    globalLog << "Política de Escalonamento: " << (POLITICA_ESCALONAMENTO == PoliticasEscalonamento::FCFS ? "FCFS" : POLITICA_ESCALONAMENTO == PoliticasEscalonamento::SJF      ? "SJF"
+                                                                                                                 : POLITICA_ESCALONAMENTO == PoliticasEscalonamento::PRIORIDADE ? "PRIORIDADE"
+                                                                                                                                                                                : "SIMILARIDADE")
               << endl;
     globalLog << "Recursos Disponíveis: " << endl;
     periferico.exibirPerifericos(globalLog);
