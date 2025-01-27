@@ -8,6 +8,7 @@
 #include "RAM.hpp"
 #include "Registers.hpp"
 #include "ProcessManager.hpp"
+#include "Cache.hpp"
 
 #include <vector>
 #include <iostream>
@@ -29,6 +30,7 @@ public:
     static int QUANTUM_PROCESS_MIN;
     static int QUANTUM_PROCESS_MAX;
     static PoliticasEscalonamento POLITICA_ESCALONAMENTO;
+    static Cache *cache;
 
     static void loadConfigBootloader(const string &file);
     static void garantirDiretorioSaidaExiste(const string &path);
@@ -38,6 +40,8 @@ public:
 
     static int getQuantumProcessMin() { return QUANTUM_PROCESS_MIN; };
     static int getQuantumProcessMax() { return QUANTUM_PROCESS_MAX; };
+
+    static void liberarRecursos(); // 🔹 Para liberar a Cache no final da execução
 };
 
 #endif

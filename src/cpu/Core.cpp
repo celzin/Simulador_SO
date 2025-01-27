@@ -2,8 +2,8 @@
 
 #define OUTPUT_DIR "data/logs"
 
-Core::Core(RAM &ram, Disco &disco, Escalonador &escalonador)
-    : ram(ram), disco(disco), PC(0), Clock(0), escalonador(escalonador) {}
+Core::Core(RAM &ram, Disco &disco, Escalonador &escalonador, Cache *cache)
+    : ram(ram), disco(disco), escalonador(escalonador), cache(cache), PC(0), Clock(0) {}
 
 void Core::activate(ofstream &outfile)
 {
@@ -70,8 +70,21 @@ void Core::activate(ofstream &outfile)
                 break;
             }
 
-            // Executa a instrução
-            uc.executarInstrucao(instr, pcb->registradores, ram, pcb->PC, disco, Clock, *pcb, outfile);
+            // **Integração com a Cache**
+            if (cache && cache->contains(instr))
+            { // 🔹 Verifica se a instrução já está na Cache
+                outfile << "[Cache] Instrução reutilizada da Cache no PC " << pcb->PC << ". Pulando execução.\n";
+            }
+            else
+            {
+                // Executa a instrução normalmente
+                uc.executarInstrucao(instr, pcb->registradores, ram, pcb->PC, disco, Clock, *pcb, outfile);
+
+                if (cache)
+                { // 🔹 Armazena o resultado na Cache para reutilização futura
+                    cache->insert(instr, pcb->registradores.get(instr.Destiny_Register));
+                }
+            }
 
             // Incrementa o PC
             pcb->PC += 1; // Incremento em unidades para acompanhar a RAM

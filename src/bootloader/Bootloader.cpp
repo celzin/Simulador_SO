@@ -6,6 +6,17 @@ int Bootloader::NUM_NUCLEOS = 0;
 int Bootloader::QUANTUM_PROCESS_MIN = 0;
 int Bootloader::QUANTUM_PROCESS_MAX = 0;
 PoliticasEscalonamento Bootloader::POLITICA_ESCALONAMENTO = PoliticasEscalonamento::FCFS;
+Cache *Bootloader::cache = nullptr; // 🔹 Inicializamos a Cache como nula
+
+void Bootloader::liberarRecursos()
+{
+    if (cache)
+    {
+        delete cache;
+        cache = nullptr;
+        cout << "[Bootloader] Cache liberada da memória.\n";
+    }
+}
 
 void Bootloader::loadConfigBootloader(const string &file)
 {
@@ -49,7 +60,8 @@ void Bootloader::loadConfigBootloader(const string &file)
     unordered_map<string, PoliticasEscalonamento> politicaMap = {
         {"FCFS", PoliticasEscalonamento::FCFS},
         {"SJF", PoliticasEscalonamento::SJF},
-        {"PRIORIDADE", PoliticasEscalonamento::PRIORIDADE}};
+        {"PRIORIDADE", PoliticasEscalonamento::PRIORIDADE},
+        {"SIMILARIDADE", PoliticasEscalonamento::SIMILARIDADE}};
 
     string politicaStr = configs["POLITICA_ESCALONAMENTO"];
     if (politicaMap.find(politicaStr) != politicaMap.end())
@@ -126,9 +138,14 @@ vector<PCB *> Bootloader::createAndConfigPCBs(Disco &disco, RAM &ram, Registers 
 void Bootloader::createCores(vector<Core> &cores, int numNucleos, RAM &ram, Disco &disco, Escalonador &escalonador)
 {
     // Criando múltiplos núcleos
-    for (int i = 0; i < numNucleos; ++i)
+    // for (int i = 0; i < numNucleos; ++i)
+    // {
+    //     cores.push_back(Core(ram, disco, escalonador));
+    // }
+    // Criando múltiplos núcleos com a Cache (se existir)
+    for (int i = 0; i < NUM_NUCLEOS; ++i)
     {
-        cores.push_back(Core(ram, disco, escalonador));
+        cores.push_back(Core(ram, disco, escalonador, cache)); // 🔹 Passamos a Cache para os Cores
     }
 }
 
@@ -146,6 +163,13 @@ void Bootloader::inicializarSistema(vector<Core> &cores, Disco &disco, Escalonad
     }
 
     globalLog << "Inicializando o sistema..." << endl;
+
+    // **Criar a Cache se a política for SIMILARIDADE**
+    if (POLITICA_ESCALONAMENTO == PoliticasEscalonamento::SIMILARIDADE)
+    {
+        cache = new Cache(100); // 🔹 Criamos a Cache com tamanho 100
+        globalLog << "[Bootloader] Cache ativada com política LRU.\n";
+    }
 
     // Configurando os registradores
     disco.setRegistersFromFile(regs, "data/setRegisters.txt");
@@ -225,4 +249,7 @@ void Bootloader::inicializarSistema(vector<Core> &cores, Disco &disco, Escalonad
     cout << "Simulação finalizada. Logs disponíveis em: " << OUTPUT_LOGS_DIR << endl;
 
     globalLog.close();
+
+    // **Liberar a Cache no final**
+    liberarRecursos();
 }
