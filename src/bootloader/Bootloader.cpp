@@ -171,6 +171,8 @@ void Bootloader::inicializarSistema(vector<Core> &cores, Disco &disco, Escalonad
         globalLog << "[Bootloader] Cache ativada com política LRU.\n";
     }
 
+    // Agora passamos a Cache e a RAM para o Escalonador depois da criação
+    escalonador.configurarCacheERAM(cache, &ram);
     // Configurando os registradores
     disco.setRegistersFromFile(regs, "data/setRegisters.txt");
 

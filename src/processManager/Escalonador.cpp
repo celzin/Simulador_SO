@@ -1,7 +1,13 @@
 #include "../includes/Escalonador.hpp"
 
-Escalonador::Escalonador(PoliticasEscalonamento politica, Cache *cache, RAM *ram)
-    : politicaAtual(politica), cache(cache), ram(ram) {}
+Escalonador::Escalonador(PoliticasEscalonamento politica)
+    : politicaAtual(politica), cache(nullptr), ram(nullptr) {}
+
+void Escalonador::configurarCacheERAM(Cache *cache, RAM *ram)
+{
+    this->cache = cache;
+    this->ram = ram;
+}
 
 void Escalonador::configurarPolitica(PoliticasEscalonamento novaPolitica)
 {

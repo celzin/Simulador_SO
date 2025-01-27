@@ -20,7 +20,8 @@ private:
     RAM *ram;
 
 public:
-    Escalonador(PoliticasEscalonamento politica = PoliticasEscalonamento::FCFS, Cache *cache = nullptr, RAM *ram = nullptr);
+    Escalonador(PoliticasEscalonamento politica = PoliticasEscalonamento::FCFS);
+    void configurarCacheERAM(Cache *cache, RAM *ram);
 
     void configurarPolitica(PoliticasEscalonamento novaPolitica);
     void adicionarProcesso(PCB *processo, ofstream &outfile); // Adiciona um processo à fila
