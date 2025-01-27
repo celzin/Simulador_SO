@@ -16,15 +16,15 @@ private:
     queue<PCB *> filaBloqueados;
     PoliticasEscalonamento politicaAtual;
     mutex mtx;
+    Cache *cache;
+    RAM *ram;
 
 public:
-    Escalonador(PoliticasEscalonamento politica = PoliticasEscalonamento::FCFS);
+    Escalonador(PoliticasEscalonamento politica = PoliticasEscalonamento::FCFS, Cache *cache = nullptr, RAM *ram = nullptr);
 
     void configurarPolitica(PoliticasEscalonamento novaPolitica);
-
     void adicionarProcesso(PCB *processo, ofstream &outfile); // Adiciona um processo à fila
-    PCB *obterProximoProcesso(ofstream &outfile);             // Retorna o próximo processo a ser executado
-
+    PCB *obterProximoProcesso(ofstream &outfile);
     void bloquearProcesso(PCB *processo, ofstream &outfile);
     void desbloquearProcessos(ofstream &outfile);
 

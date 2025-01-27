@@ -79,3 +79,55 @@ PCB *PoliticasEscalonamentoHandler::selecionarProcessoPrioridade(queue<PCB *> &f
 
     return processoMaiorPrioridade;
 }
+
+PCB *PoliticasEscalonamentoHandler::selecionarProcessoSimilaridade(queue<PCB *> &filaProntos, Cache &cache, RAM &ram, ofstream &outfile)
+{
+    vector<PCB *> candidatos;
+    PCB *melhorProcesso = nullptr;
+    int maxReuso = 0;
+
+    // Avalia cada processo e verifica quantas instruções já estão na Cache
+    while (!filaProntos.empty())
+    {
+        PCB *atual = filaProntos.front();
+        filaProntos.pop();
+        candidatos.push_back(atual);
+
+        int reusoInstrucao = 0;
+        for (int i = atual->getEnderecoBaseInstrucoes(); i < atual->getLimiteInstrucoes(); ++i)
+        {
+            Instruction instr = ram.fetchInstruction(i); // 🔹 Agora usamos a RAM corretamente
+            if (cache.contains(instr))
+            {
+                reusoInstrucao++;
+            }
+        }
+
+        // Atualiza o processo que pode reutilizar mais instruções da Cache
+        if (reusoInstrucao > maxReuso)
+        {
+            maxReuso = reusoInstrucao;
+            melhorProcesso = atual;
+        }
+    }
+
+    // Se nenhum processo tiver similaridade, usa FCFS como fallback
+    if (!melhorProcesso)
+    {
+        melhorProcesso = candidatos.front();
+    }
+
+    // Reinsere os processos restantes na fila
+    for (PCB *pcb : candidatos)
+    {
+        if (pcb != melhorProcesso)
+        {
+            filaProntos.push(pcb);
+        }
+    }
+
+    outfile << "[Escalonador][SIMILARIDADE] Processo " << melhorProcesso->pid
+            << " selecionado com " << maxReuso << " instruções já armazenadas na Cache.\n";
+
+    return melhorProcesso;
+}
