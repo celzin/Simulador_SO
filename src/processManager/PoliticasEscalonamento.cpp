@@ -96,7 +96,7 @@ PCB *PoliticasEscalonamentoHandler::selecionarProcessoSimilaridade(queue<PCB *> 
         int reusoInstrucao = 0;
         for (int i = atual->getEnderecoBaseInstrucoes(); i < atual->getLimiteInstrucoes(); ++i)
         {
-            Instruction instr = ram.fetchInstruction(i); // 🔹 Agora usamos a RAM corretamente
+            Instruction instr = ram.fetchInstruction(i); // Agora usamos a RAM corretamente
             if (cache.contains(instr))
             {
                 reusoInstrucao++;

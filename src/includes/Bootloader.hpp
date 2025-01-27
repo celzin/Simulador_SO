@@ -41,7 +41,7 @@ public:
     static int getQuantumProcessMin() { return QUANTUM_PROCESS_MIN; };
     static int getQuantumProcessMax() { return QUANTUM_PROCESS_MAX; };
 
-    static void liberarRecursos(); // 🔹 Para liberar a Cache no final da execução
+    static void liberarRecursos(); // Para liberar a Cache no final da execução
 };
 
 #endif

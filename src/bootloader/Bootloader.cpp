@@ -6,7 +6,7 @@ int Bootloader::NUM_NUCLEOS = 0;
 int Bootloader::QUANTUM_PROCESS_MIN = 0;
 int Bootloader::QUANTUM_PROCESS_MAX = 0;
 PoliticasEscalonamento Bootloader::POLITICA_ESCALONAMENTO = PoliticasEscalonamento::FCFS;
-Cache *Bootloader::cache = nullptr; // 🔹 Inicializamos a Cache como nula
+Cache *Bootloader::cache = nullptr; // Inicializamos a Cache como nula
 
 void Bootloader::liberarRecursos()
 {
@@ -138,14 +138,9 @@ vector<PCB *> Bootloader::createAndConfigPCBs(Disco &disco, RAM &ram, Registers 
 void Bootloader::createCores(vector<Core> &cores, int numNucleos, RAM &ram, Disco &disco, Escalonador &escalonador)
 {
     // Criando múltiplos núcleos
-    // for (int i = 0; i < numNucleos; ++i)
-    // {
-    //     cores.push_back(Core(ram, disco, escalonador));
-    // }
-    // Criando múltiplos núcleos com a Cache (se existir)
     for (int i = 0; i < NUM_NUCLEOS; ++i)
     {
-        cores.push_back(Core(ram, disco, escalonador, cache)); // 🔹 Passamos a Cache para os Cores
+        cores.push_back(Core(ram, disco, escalonador, cache)); // Passamos a Cache para os Cores
     }
 }
 
@@ -167,7 +162,7 @@ void Bootloader::inicializarSistema(vector<Core> &cores, Disco &disco, Escalonad
     // **Criar a Cache se a política for SIMILARIDADE**
     if (POLITICA_ESCALONAMENTO == PoliticasEscalonamento::SIMILARIDADE)
     {
-        cache = new Cache(100); // 🔹 Criamos a Cache com tamanho 100
+        cache = new Cache(100); // Criamos a Cache com tamanho 100
         globalLog << "[Bootloader] Cache ativada com política LRU.\n";
     }
 
@@ -185,7 +180,8 @@ void Bootloader::inicializarSistema(vector<Core> &cores, Disco &disco, Escalonad
     globalLog << "Número de Núcleos: " << NUM_NUCLEOS << endl;
     globalLog << "Número de Processos: " << disco.listInstructionsFile("data/instr").size() << endl;
     globalLog << "Política de Escalonamento: " << (POLITICA_ESCALONAMENTO == PoliticasEscalonamento::FCFS ? "FCFS" : POLITICA_ESCALONAMENTO == PoliticasEscalonamento::SJF ? "SJF"
-                                                                                                                                                                           : "PRIORIDADE")
+                                                                                                                 : POLITICA_ESCALONAMENTO == PoliticasEscalonamento::SJF   ? "PRIORIDADE"
+                                                                                                                                                                           : "SIMILARIDADE")
               << endl;
     globalLog << "Recursos Disponíveis: " << endl;
     periferico.exibirPerifericos(globalLog);
