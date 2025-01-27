@@ -71,8 +71,9 @@ void Core::activate(ofstream &outfile)
             }
 
             // **Integração com a Cache**
+            bool instrucaoExecutada = false; // Flag para indicar se houve execução
             if (cache && cache->contains(instr))
-            { // 🔹 Verifica se a instrução já está na Cache
+            { // Verifica se a instrução já está na Cache
                 outfile << "[Cache] Instrução reutilizada da Cache no PC " << pcb->PC << ". Pulando execução.\n";
             }
             else
@@ -81,17 +82,21 @@ void Core::activate(ofstream &outfile)
                 uc.executarInstrucao(instr, pcb->registradores, ram, pcb->PC, disco, Clock, *pcb, outfile);
 
                 if (cache)
-                { // 🔹 Armazena o resultado na Cache para reutilização futura
+                { // Armazena o resultado na Cache para reutilização futura
                     cache->insert(instr, pcb->registradores.get(instr.Destiny_Register));
                 }
+
+                instrucaoExecutada = true;
             }
 
             // Incrementa o PC
-            pcb->PC += 1; // Incremento em unidades para acompanhar a RAM
+            pcb->PC += 1;
 
-            // Decrementa o quantum
-            pcb->decrementarQuantum(outfile);
-            tempoExecutado++; // Atualiza tempo de execução real
+            if (instrucaoExecutada)
+            {
+                pcb->decrementarQuantum(outfile);
+                tempoExecutado++;
+            }
         }
 
         // **Corrigir tempo de retorno para processos preemptados**
