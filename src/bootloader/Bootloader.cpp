@@ -5,8 +5,9 @@ string Bootloader::OUTPUT_LOGS_DIR = "";
 int Bootloader::NUM_NUCLEOS = 0;
 int Bootloader::QUANTUM_PROCESS_MIN = 0;
 int Bootloader::QUANTUM_PROCESS_MAX = 0;
+int Bootloader::CACHE_CAPACIDADE = 7; // Capacidade máx da Cache
 PoliticasEscalonamento Bootloader::POLITICA_ESCALONAMENTO = PoliticasEscalonamento::FCFS;
-Cache *Bootloader::cache = nullptr; // Inicializamos a Cache como nula
+Cache *Bootloader::cache = nullptr;
 
 void Bootloader::liberarRecursos()
 {
@@ -159,11 +160,11 @@ void Bootloader::inicializarSistema(vector<Core> &cores, Disco &disco, Escalonad
 
     globalLog << "Inicializando o sistema..." << endl;
 
-    // **Criar a Cache se a política for SIMILARIDADE**
+    // Criar a Cache se a política for SIMILARIDADE**
     if (POLITICA_ESCALONAMENTO == PoliticasEscalonamento::SIMILARIDADE)
     {
-        cache = new Cache(100); // Criamos a Cache com tamanho 100
-        globalLog << "[Bootloader] Cache ativada com política LRU.\n";
+        cache = new Cache(CACHE_CAPACIDADE);
+        globalLog << "[Bootloader] Cache ativada com política LRU e capacidade de " << CACHE_CAPACIDADE << " instruções.\n";
     }
 
     // Agora passamos a Cache e a RAM para o Escalonador depois da criação

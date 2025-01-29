@@ -26,8 +26,8 @@ void Core::activate(ofstream &outfile)
         }
 
         // **Cálculo do tempo de espera e tempo de retorno
-        int tempoExecutado = 0;
-        int tempoEspera = tempoAtual;
+        double tempoExecutado = 0.0;
+        double tempoEspera = tempoAtual;
 
         // Restaurar o estado do processo
         auto pipelineState = pipeline.getPipelineState();
@@ -75,6 +75,7 @@ void Core::activate(ofstream &outfile)
             if (cache && cache->contains(instr))
             { // Verifica se a instrução já está na Cache
                 outfile << "[Cache] Instrução reutilizada da Cache no PC " << pcb->PC << ". Pulando execução.\n";
+                tempoExecutado += 0.4; // Incrementa 2/5 do tempo de execução (2 estágios da pipeline)
             }
             else
             {
@@ -100,7 +101,7 @@ void Core::activate(ofstream &outfile)
         }
 
         // **Corrigir tempo de retorno para processos preemptados**
-        int tempoRetorno = tempoEspera + tempoExecutado; // Agora, considera só o tempo real executado
+        double tempoRetorno = tempoEspera + tempoExecutado; // Agora, considera só o tempo real executado
         // Atualizar métricas do núcleo
         tempoTotalEspera += tempoEspera;
         tempoTotalRetorno += tempoRetorno;

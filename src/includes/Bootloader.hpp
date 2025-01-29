@@ -30,6 +30,7 @@ public:
     static int QUANTUM_PROCESS_MIN;
     static int QUANTUM_PROCESS_MAX;
     static PoliticasEscalonamento POLITICA_ESCALONAMENTO;
+    static int CACHE_CAPACIDADE;
     static Cache *cache;
 
     static void loadConfigBootloader(const string &file);
