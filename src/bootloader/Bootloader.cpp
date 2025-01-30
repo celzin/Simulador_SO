@@ -5,7 +5,7 @@ string Bootloader::OUTPUT_LOGS_DIR = "";
 int Bootloader::NUM_NUCLEOS = 0;
 int Bootloader::QUANTUM_PROCESS_MIN = 0;
 int Bootloader::QUANTUM_PROCESS_MAX = 0;
-int Bootloader::CACHE_CAPACIDADE = 7; // Capacidade máx da Cache
+int Bootloader::CACHE_CAPACIDADE = 10; // Capacidade máx da Cache
 PoliticasEscalonamento Bootloader::POLITICA_ESCALONAMENTO = PoliticasEscalonamento::FCFS;
 Cache *Bootloader::cache = nullptr;
 
