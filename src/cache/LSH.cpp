@@ -55,7 +55,7 @@ int LSH::calcularSimilaridade(PCB *p1, PCB *p2, RAM &ram)
     return iguais;
 }
 
-void LSH::organizarPorSimilaridade(queue<PCB *> &filaProntos, RAM &ram)
+void LSH::organizarPorSimilaridade(queue<PCB *> &filaProntos, RAM &ram, ofstream &outfile)
 {
     vector<PCB *> processos;
     while (!filaProntos.empty())
@@ -67,10 +67,6 @@ void LSH::organizarPorSimilaridade(queue<PCB *> &filaProntos, RAM &ram)
     if (processos.empty())
         return;
 
-    cout << "\n[LSH] Fila original dos processos:\n";
-    for (PCB *p : processos)
-        cout << "Processo " << p->pid << "\n";
-
     // Construção da matriz de similaridade
     unordered_map<int, unordered_map<int, int>> matrizSimilaridade;
     for (size_t i = 0; i < processos.size(); i++)
@@ -80,16 +76,6 @@ void LSH::organizarPorSimilaridade(queue<PCB *> &filaProntos, RAM &ram)
             int similaridade = calcularSimilaridade(processos[i], processos[j], ram);
             matrizSimilaridade[processos[i]->pid][processos[j]->pid] = similaridade;
             matrizSimilaridade[processos[j]->pid][processos[i]->pid] = similaridade;
-        }
-    }
-
-    cout << "\n[LSH] Matriz de Similaridade entre Processos:\n";
-    for (size_t i = 0; i < processos.size(); i++)
-    {
-        for (size_t j = i + 1; j < processos.size(); j++)
-        {
-            cout << "P" << processos[i]->pid << " <-> P" << processos[j]->pid
-                 << " : " << matrizSimilaridade[processos[i]->pid][processos[j]->pid] << " instruções iguais.\n";
         }
     }
 
@@ -140,9 +126,24 @@ void LSH::organizarPorSimilaridade(queue<PCB *> &filaProntos, RAM &ram)
         }
     }
 
-    cout << "\n[LSH] Ordem final dos processos após organização:\n";
-    for (PCB *p : filaOrdenada)
-        cout << "Processo " << p->pid << "\n";
+    outfile << "\n[LSH] Matriz Final de Similaridade:\n";
+    for (size_t i = 0; i < filaOrdenada.size(); i++)
+    {
+        for (size_t j = i + 1; j < filaOrdenada.size(); j++)
+        {
+            outfile << "P" << filaOrdenada[i]->pid << " <-> P" << filaOrdenada[j]->pid
+                    << " : " << matrizSimilaridade[filaOrdenada[i]->pid][filaOrdenada[j]->pid] << " instruções iguais.\n";
+        }
+    }
+
+    outfile << "\n[LSH] Ordem Execução dos Processos: ";
+    for (size_t i = 0; i < filaOrdenada.size(); i++)
+    {
+        outfile << "P" << filaOrdenada[i]->pid;
+        if (i < filaOrdenada.size() - 1)
+            outfile << " -> ";
+    }
+    outfile << "\n";
 
     // Reconstituir a fila original na nova ordem
     for (PCB *processo : filaOrdenada)

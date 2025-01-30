@@ -12,7 +12,7 @@ using namespace std;
 class LSH
 {
 public:
-    static void organizarPorSimilaridade(queue<PCB *> &filaProntos, RAM &ram);
+    static void organizarPorSimilaridade(queue<PCB *> &filaProntos, RAM &ram, ofstream &outfile);
 
 private:
     static size_t calcularHashLSH(PCB *processo, RAM &ram);

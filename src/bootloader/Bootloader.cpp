@@ -15,7 +15,7 @@ void Bootloader::liberarRecursos()
     {
         delete cache;
         cache = nullptr;
-        cout << "[Bootloader] Cache liberada da memória.\n";
+        // cout << "[Bootloader] Cache liberada da memória.\n";
     }
 }
 
