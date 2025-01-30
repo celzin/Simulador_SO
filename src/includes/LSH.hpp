@@ -16,6 +16,7 @@ public:
 
 private:
     static size_t calcularHashLSH(PCB *processo, RAM &ram);
+    static int calcularSimilaridade(PCB *p1, PCB *p2, RAM &ram);
 };
 
 #endif
