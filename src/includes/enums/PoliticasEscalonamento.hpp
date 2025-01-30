@@ -3,6 +3,7 @@
 
 #include "../PCB.hpp"
 #include "../Cache.hpp"
+#include "../LSH.hpp"
 #include <fstream>
 #include <queue>
 #include <vector>
