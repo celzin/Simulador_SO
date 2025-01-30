@@ -25,7 +25,7 @@ void Core::activate(ofstream &outfile)
             return;
         }
 
-        // **Cálculo do tempo de espera e tempo de retorno
+        // Cálculo do tempo de espera e tempo de retorno
         double tempoExecutado = 0.0;
         double tempoEspera = tempoAtual;
 
@@ -70,12 +70,12 @@ void Core::activate(ofstream &outfile)
                 break;
             }
 
-            // **Integração com a Cache**
+            // Integração com a Cache
             bool instrucaoExecutada = false; // Flag para indicar se houve execução
             if (cache && cache->contains(instr))
             { // Verifica se a instrução já está na Cache
                 outfile << "[Cache] Instrução reutilizada da Cache no PC " << pcb->PC << ". Pulando execução.\n";
-                tempoExecutado += 0.4; // Incrementa 2/5 do tempo de execução (2 estágios da pipeline)
+                tempoExecutado += 0.2; // Incrementa 1/5 do tempo de execução
             }
             else
             {
@@ -100,13 +100,13 @@ void Core::activate(ofstream &outfile)
             }
         }
 
-        // **Corrigir tempo de retorno para processos preemptados**
+        // Corrigir tempo de retorno para processos preemptados
         double tempoRetorno = tempoEspera + tempoExecutado; // Agora, considera só o tempo real executado
         // Atualizar métricas do núcleo
         tempoTotalEspera += tempoEspera;
         tempoTotalRetorno += tempoRetorno;
         processosExecutados++;
-        tempoAtual += tempoExecutado; // **Atualizar tempo total do núcleo apenas com tempo real de execução**
+        tempoAtual += tempoExecutado;
 
         outfile << "[Núcleo " << this_thread::get_id()
                 << "] Processo: " << pcb->pid
