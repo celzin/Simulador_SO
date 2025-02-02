@@ -96,3 +96,8 @@ bool Escalonador::temProcessosProntos() const
 {
     return !filaProntos.empty();
 }
+
+queue<PCB *> &Escalonador::getFilaProntos()
+{
+    return filaProntos;
+}

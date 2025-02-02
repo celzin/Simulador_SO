@@ -195,6 +195,13 @@ void Bootloader::inicializarSistema(vector<Core> &cores, Disco &disco, Escalonad
     // Criando e configurando PCBs
     vector<PCB *> pcbs = Bootloader::createAndConfigPCBs(disco, ram, regs, escalonador, arquivosInstrucoes, globalLog);
 
+    // Utiliza o LSH para organizar a fila antes da execução
+    if (POLITICA_ESCALONAMENTO == PoliticasEscalonamento::SIMILARIDADE)
+    {
+        globalLog << "[Bootloader] Aplicando LSH para reorganização da fila antes da execução...\n";
+        LSH::organizarPorSimilaridade(escalonador.getFilaProntos(), ram, globalLog);
+    }
+
     // Criando múltiplos núcleos
     createCores(cores, NUM_NUCLEOS, ram, disco, escalonador);
 

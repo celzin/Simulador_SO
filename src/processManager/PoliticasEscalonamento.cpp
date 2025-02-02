@@ -82,8 +82,7 @@ PCB *PoliticasEscalonamentoHandler::selecionarProcessoPrioridade(queue<PCB *> &f
 
 PCB *PoliticasEscalonamentoHandler::selecionarProcessoSimilaridade(queue<PCB *> &filaProntos, Cache &cache, RAM &ram, ofstream &outfile)
 {
-    // Utiliza o LSH para organizar a fila antes da execução
-    LSH::organizarPorSimilaridade(filaProntos, ram, outfile);
+    // Utiliza o LSH no Bootloader para organizar a fila antes da execução
 
     // Retorna o primeiro processo da fila reorganizada
     if (filaProntos.empty())

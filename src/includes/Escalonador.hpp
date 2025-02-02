@@ -20,6 +20,7 @@ private:
     RAM *ram;
 
 public:
+    queue<PCB *> &getFilaProntos();
     Escalonador(PoliticasEscalonamento politica = PoliticasEscalonamento::FCFS);
     void configurarCacheERAM(Cache *cache, RAM *ram);
 
